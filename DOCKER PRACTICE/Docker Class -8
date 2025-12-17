@@ -1,5 +1,28 @@
 DOCKER VOLUMES 
+1. The main purpose of using DOCKER VOLUMES is to save the data even the containers got deleted also, again we can create new containers and use it by attaching 
+the containers to the volumes.
 
+2. we are using the component here to svae the dat is DOCKER VOLUMES even the  containers got deleted also.
+
+3. For example same application is running in 2 containers client want to change font colour/ font size in container the change will happen in container 1 then 
+what about container 2 in here container2 also need to change manually in here having 2 containers means we can do change manually
+for suppose having a plenty of containers in real time we can't do manually in each container it can take more time
+in this kind of case situation if we have any no.of containers also for example having plenty of application containers
+here i will create one ebs volume for all this plenty of application containers and i will do attach to every conatiner
+NOW once i done attached the volume to all application containers here if i update an data in volume means data will be updated in the rest of all the containers 
+as well in each and every container.
+
+4. if we add data in volume or delete the data in volume same will happen in rest of the containers as well.
+
+5. Now can we do in pratctical
+process is data will be replicated container to container lets prove it 
+
+>.first create one volume here command was
+
+docker volume create pranaydb(pranaydb ----> is volume name)
+after this when we are going to create a container we need to mount the created volume to one particular path insidea container that means 
+the data should be store in a particular path and folder
+for example 
 
 https://docker77.hashnode.dev/docker-volumes-with-real-time-examples
 
