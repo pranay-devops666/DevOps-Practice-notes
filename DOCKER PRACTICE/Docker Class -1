@@ -1,1 +1,97 @@
 DOCKER CLASS -1 NOTES
+
+
+Docker Class 1 and folliwing commands 
+ Blogs : 
+link-1: https://docker77.hashnode.dev/docker-introduction-architecture
+link-2: https://docker77.hashnode.dev/mastering-the-art-of-creating-containers
+
+Todays Commands:
+
+
+
+
+    1  yum install docker -y
+
+    2  docker version
+
+    3  systemctl status docker
+
+    4  systemctl start docker
+
+    5  systemctl status docker
+
+    6  docker version
+
+    7  docker pull shaikmustafa/paytm:bus
+
+    8  docker images
+
+    9  docker run -d --name bus -p 1431:80  shaikmustafa/paytm:bus
+
+   10  docker ps
+
+   11  docker logs bus
+
+   12  docker ps
+
+   13  docker pull shaikmustafa/paytm:movie
+
+   14  docker images
+
+   15  docker run -d --name movie -p 1111:80  shaikmustafa/paytm:movie
+
+   16  docker ps
+
+   17  docker pull shaikmustafa/paytm:bank
+
+   18  docker images
+
+   19  docker run -d --name bank -p 2222:80 shaikmustafa/paytm:movie
+
+   20  docker ps
+
+   21  docker rm bank
+
+   22  docker stop bank
+
+   23  docker rm bank
+
+   24  docker ps
+
+   25  docker run -d --name bank -p 2222:80 shaikmustafa/paytm:bank
+
+   26  docker ps
+
+   27  docker stop movie
+
+   28  docker start movie
+
+   29  docker stop bank
+
+   30  docker start banl
+
+   31  docker start bank
+
+   32  docker images
+history
+
+yum install docker -y                    --------> command to install docker
+systemctl start docker                   --------> command to start docker after installed the docker
+systemctl restart docker                 --------> command to restart docker after installed the docker
+systemctl status docker                  --------> command to check status of the docker running or not 
+docker --version                         --------> command to check docker version
+docker version                           --------> command to check docker version and every details of the docker as well
+docker run ubuntu(base image)            --------> command to create image with base image ubuntu
+docker pull shaikmustafa/paytm:bus       --------> command to pull image from dockerhub shaikmustafa/paytm(this is the image name) :bus(this is the image version)
+docker images                            --------> command to check created images
+docker inspect imagename/image ID        --------> command to know full information of the image
+docker run -d --name bus -p 1431:80 shaikmustafa/paytm:bus 
+--------> command to create container with imagename along with containernumber:port number to access the application after container get created
+docker stop imagename                    --------> command to stop image
+docker rm imagename                      --------> command to delete image
+docker rmi $(docker images -q)           --------> command to delete all images at a time here -d(detach/demaon)
+docker run -itd --name containername imagename   --------> command to create a container with baseimage/already created image
+docker ps                                 --------> command to check the container is created or not
+docker ps -a                              --------> command to check running container ex:container is up state, exited state, stoped state
+docker logs bus(bus is container name)    --------> command to track who is getting accessing the application
