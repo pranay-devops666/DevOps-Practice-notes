@@ -2,3 +2,94 @@ DOCKER VOLUMES
 
 
 https://docker77.hashnode.dev/docker-volumes-with-real-time-examples
+
+
+yum install docker -y && systemctl start docker
+    2  systemctl status docker
+    3  docker volume create pranaydb
+    4  docker volume ls
+    5  docker ps -a
+    6  docker ps
+    7  docker volume create webapps
+    8  docker volume ls
+    9  cd /var/lib/docker/
+   10  ll
+   11  cd volumes/
+   12  ll
+   13  cd webapps/
+   14  ll
+   15  cd _data/
+   16  ll
+   17  vim index.html
+   18  ll
+   19  ls
+   20  docker volume ls
+   21  docker run -itd --name cont1 -p 1111:80 --mount src=webapps,destination=/usr/share/nginx/html nginx
+   22  docker run -itd --name cont2 -p 2222:80 --mount src=webapps,destination=/usr/share/nginx/html nginx
+   23  docker run -itd --name cont3 -p 3333:80 --mount src=webapps,destination=/usr/share/nginx/html nginx
+   24  docker ps -a
+   25  vim index.html
+   26  ll
+   27* 
+   28  docker volume ls
+   29  docker volume rm pranaydb
+   30  ll
+   31  docker volume ls
+   32  ll
+   33  ls
+   34  docker volume ls
+   35  docker run -itd --name cont4 -p 4444:80 -v newapp:/usr/local/apache2/htdocs/ httpd
+   36  docker ps -a
+   37  docker volume ls
+   38  ll
+   39  cd ..
+   40  ll
+   41  cd ..
+   42  ll
+   43  cd newapp/
+   44  ll
+   45  cd _data/
+   46  ll
+   47  vim index.html 
+   48  cd 
+   49  docker volume ls
+   50  docker volume inspect newapp
+   51  docker volume
+   52  yum install git -y
+   53  git clone https://github.com/pranay-devops666/one.git
+   54  ll
+   55  cd one/
+   56  ll
+   57  docker volume ls
+   58  docker run -itd --name netflix -p 1122:80 -v $(pwd):/usr/share/nginx/html nginx
+   59  docker ps -a
+   60  rm -rf *
+   61  ll
+   62  docker volume ls
+   63  docker volume babu
+   64  docker volume create babu
+   65  docker volume ls
+   66  docker run -itd --name cont-ba -v --mount src=babu,destination=/gorantla:ro ubuntu
+   67  cd 
+   68  docker volume ls
+   69  docker run -itd --name cont7 --mount src=babu,destination=gorantla:ro ubuntu
+   70  docker run -itd --name cont7 --mount src=babu,destination=/gorantla:ro ubuntu
+   71  docker ps -a
+   72  docker exec -it cont7 bash
+   73  ll
+   74  docker run -itd --name devops -v myvolume:/myapp:ro ubuntu
+   75  docker ps -a
+   76  docker exec -it devops bash
+   77  cd /var/lib/docker/volumes
+   78  ll
+   79  cd myvolume/
+   80  ll
+   81  cd _data/
+   82  ll
+   83  ls
+   84  cd 
+   85  docker run -itd --name container --mount src=babu,destination=/gorantla,ro ubuntu
+   86  docker ps -a
+   87  docker exec -it container bash
+   88  ll
+   89  history
