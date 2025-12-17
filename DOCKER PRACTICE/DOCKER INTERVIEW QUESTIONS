@@ -1,0 +1,22 @@
+Docker Interview Questions
+
+What is Docker
+What is Containerization
+Diff between vm and container
+what is docker image
+what is container
+diff b/w container and image
+what is command to create a container
+what is command to pull the images
+how to see running containers
+how to check container logs
+explain about docker architecture
+refer all docker commands
+What is Dockerfile
+what is the diff b/w copy and add
+diff b/w env and arg
+what is the command to build a Dockerfile
+CMD vs ENTRYPOINT
+Write a Dockerfile for Python application
+What is docker registry
+How to push docker images to registry
