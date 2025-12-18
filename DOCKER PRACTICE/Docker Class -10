@@ -1,1 +1,63 @@
 DOCKER COMPOSE PART-1
+IN DOCKER WE HAVE 4 MAJOR PILLARS
+1. DOCKER IMAGES
+2. DOCKER CONTAINERS 
+3. DOCKER VOLUMES
+4. DOCKER NETWORKS
+those all are we will use in real time scenarios
+those 4 we will do integrate to DOCKER COMPOSE
+
+DOCKER COMPOSE ---------> is used to create multiple services in a single host.
+
+service means its a part of application
+for example take an example of Paytm in it so many services are there like tickets booking, movie tickets booking binding all those applications we can say it as a application.
+We are creating all services which are exist in an application at a time we are using DOCKER COMPOSE 
+We are using DOCKER COMPOSE to create all services in the application at once.
+like example frontend, backend and databse everything.
+
+first launch one instance with t3.micro and keypair with 15gb ebs volume.
+first download DOCKER
+
+yum install docker -y && systemctl start docker
+
+now install docker-compose
+
+
+
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+sudo yum install -y python3-pip
+sudo pip3 install docker-compose
+docker-compose version
+
+
+# Download the current stable release of Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose 
+# Apply executable permissions
+sudo chmod +x /usr/local/bin/docker-compose
+# Create a symbolic link
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+# Install using pip (Python package manager)
+sudo yum install -y python3-pip
+sudo pip3 install docker-compose
+
+#check version
+docker-compose version
+
+
+now write file for docker-compose
+
+docker-compose file must be a specific name like compose.yml, compose.yaml, docker-compose.yml, docker-compose.yaml
+these 4 formats will be spcific
+
+vim docker-compose
+
+yaml file starts with ---
+
+---
+version: "3"
+
+
+
+
