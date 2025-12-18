@@ -1,4 +1,18 @@
 DOCKER VOLUMES 
+
+https://docker77.hashnode.dev/docker-volumes-with-real-time-examples
+
+DOCKER VOLUME COMMANDS
+
+docker volume create volumename -----------> to create a volume
+docker volume inspect volumename -----------> to know full information about the volume
+docker volume ls                 -----------> to know the list of volumes
+docker volume rm volumename      -----------> to delete the volume
+docker volume prune              -----------> to delete the unused volumes
+
+
+
+
 1. The main purpose of using DOCKER VOLUMES is to save the data even the containers got deleted also, again we can create new containers and use it by attaching 
 the containers to the volumes.
 
@@ -19,100 +33,247 @@ process is data will be replicated container to container lets prove it
 
 >.first create one volume here command was
 
-docker volume create pranaydb(pranaydb ----> is volume name)
-after this when we are going to create a container we need to mount the created volume to one particular path insidea container that means 
-the data should be store in a particular path and folder
-for example 
+docker volume create pranayvolume
 
-https://docker77.hashnode.dev/docker-volumes-with-real-time-examples
+next while going to create a container 
+now we need  do mount in one particular path inside a cotainer through this create volume means data need to be store din a specific folder called as mount need 
+to be mention
+for example /path/----> this path not exist inside a container also it will be created as that path
+
+now if i create a file in volume means the file must be exist in that path inside a container & in that file if we added data in volume means 
+the data will be added in that file as well
 
 
-yum install docker -y && systemctl start docker
-    2  systemctl status docker
-    3  docker volume create pranaydb
-    4  docker volume ls
-    5  docker ps -a
-    6  docker ps
-    7  docker volume create webapps
-    8  docker volume ls
-    9  cd /var/lib/docker/
-   10  ll
-   11  cd volumes/
-   12  ll
-   13  cd webapps/
-   14  ll
-   15  cd _data/
-   16  ll
-   17  vim index.html
-   18  ll
-   19  ls
-   20  docker volume ls
-   21  docker run -itd --name cont1 -p 1111:80 --mount src=webapps,destination=/usr/share/nginx/html nginx
-   22  docker run -itd --name cont2 -p 2222:80 --mount src=webapps,destination=/usr/share/nginx/html nginx
-   23  docker run -itd --name cont3 -p 3333:80 --mount src=webapps,destination=/usr/share/nginx/html nginx
-   24  docker ps -a
-   25  vim index.html
-   26  ll
-   27* 
-   28  docker volume ls
-   29  docker volume rm pranaydb
-   30  ll
-   31  docker volume ls
-   32  ll
-   33  ls
-   34  docker volume ls
-   35  docker run -itd --name cont4 -p 4444:80 -v newapp:/usr/local/apache2/htdocs/ httpd
-   36  docker ps -a
-   37  docker volume ls
-   38  ll
-   39  cd ..
-   40  ll
-   41  cd ..
-   42  ll
-   43  cd newapp/
-   44  ll
-   45  cd _data/
-   46  ll
-   47  vim index.html 
-   48  cd 
-   49  docker volume ls
-   50  docker volume inspect newapp
-   51  docker volume
-   52  yum install git -y
-   53  git clone https://github.com/pranay-devops666/one.git
-   54  ll
-   55  cd one/
-   56  ll
-   57  docker volume ls
-   58  docker run -itd --name netflix -p 1122:80 -v $(pwd):/usr/share/nginx/html nginx
-   59  docker ps -a
-   60  rm -rf *
-   61  ll
-   62  docker volume ls
-   63  docker volume babu
-   64  docker volume create babu
-   65  docker volume ls
-   66  docker run -itd --name cont-ba -v --mount src=babu,destination=/gorantla:ro ubuntu
-   67  cd 
-   68  docker volume ls
-   69  docker run -itd --name cont7 --mount src=babu,destination=gorantla:ro ubuntu
-   70  docker run -itd --name cont7 --mount src=babu,destination=/gorantla:ro ubuntu
-   71  docker ps -a
-   72  docker exec -it cont7 bash
-   73  ll
-   74  docker run -itd --name devops -v myvolume:/myapp:ro ubuntu
-   75  docker ps -a
-   76  docker exec -it devops bash
-   77  cd /var/lib/docker/volumes
-   78  ll
-   79  cd myvolume/
-   80  ll
-   81  cd _data/
-   82  ll
-   83  ls
-   84  cd 
-   85  docker run -itd --name container --mount src=babu,destination=/gorantla,ro ubuntu
-   86  docker ps -a
-   87  docker exec -it container bash
-   88  ll
-   89  history
+i can be mount this volume to any newly create container as well
+
+here mount means attaching a volume to a device 
+
+now if the containers will be deleted the dat will be get in the volume
+
+we can't attach a volume to the existing container
+
+launch one instance--->t3.micro-->keypair----->jensecgrp------>ebs volume ---->20
+
+docker volume ls
+docker volume create pranaydb
+docker volume ls
+
+now the created volume need to be mount a new container while creating a container
+
+docker run -itd --name cont1 --mount src=/pranaydb,destination=/babu ubuntu
+# cont1----> container name praaydb-----> volume name babu------>going to mount in this path inside a container
+
+docker exec -it cont1 bash
+in here inside a container this mount point path /babu will be apper as like a directory, but it is diffirent
+here inside a container /babu folder and pranaydb will both same apper like a directory but, both are differen
+/babu-------> is a folder
+pranaydb-------> is a volume name------> it is used to replicate the data
+
+
+cd pranaydb/
+
+add some files here 
+
+touch file{1..5}.txt
+
+1. first i created a volume name as pranaydb and it has empty volume data is not exist
+2. next i am going to attach a new container and one particular path inside a container like /babu
+3. next i created some files inside a volume those all files will get stored on this volume
+
+ctrl+p+q
+
+now the doubt is how do we know for a particular container which volume is attached and data where it s stored in the volume is
+go to this path
+cd /var/lib/docker/volume/
+
+here we can see created volume go to that volume
+
+cd pranaydb/
+here _data folder will be appear
+go to this _data folder
+cd _data/
+here we can see the files, folders and data inside a volume
+
+docker default path is
+
+cd /var/lib/docker/
+
+
+if we do any changes in inside a volume like adding, deleting, updating what ever everything 
+it will be happen replication in inside a container as default what we done mount pointinside a container
+this is called data replication
+
+now lets create another 2 containers to do data replication 
+container to container
+container------>container
+
+docker run -itd --name cont2 --mount src=/pranaydb,destination=/babu ubuntu
+docker run -itd --name cont3 --mount src=/pranaydb,destination=/babu ubuntu
+
+now go to container1 and do some changes here
+
+docker exec -it cont1 bash
+
+add some files here
+
+touch tcs infosys wipro
+
+ctrl+p+q
+
+now go to container 2 and add some files over there
+
+docker exec -it cont2 bash
+
+touch file1  file2 file3
+
+ctrl+p+q
+
+now go to cont and do check here data has been replicated or not what changes made in cont2
+
+now we will do ine real time example
+
+remove all containers
+
+docker rm $(docker ps-a -q)
+
+first create one volume here
+
+docker create ramavolume
+
+now we will keep the data inside a volume then go to volume default path
+
+cd /var/lib/docker/volumes/
+
+here we can see created ramavolume go to that volume
+
+cd ramavolume/
+
+here _data folder will be appear go to that path
+
+cd _data
+
+here we can add the data 
+
+vim index.html
+
+<h1>this is data </h1>
+
+:wq
+
+
+now create one new container and mount this volume to that new container
+
+now here we have ramavolume and some data also is there in that volume 
+suppose if we can able to do copy the data which exist in the volume into the nginx default path we can able to access the application means we need to mount the 
+volume data to the nginx default path here below command
+
+docker run -itd --name continer -p 1111:80 --mount src=/ramavolum,destination=/usr/share/nginx/html nginx
+
+check the application will be able to access or not
+
+publicIP:container port number
+
+ip:1111
+
+docker run -itd --name continer2 -p 2222:80 --mount src=/ramavolum,destination=/usr/share/nginx/html nginx
+
+docker run -itd --name continer3 -p 3333:80 --mount src=/ramavolum,destination=/usr/share/nginx/html nginx
+
+we are able to access the application with both containers
+
+now if the client say made changes in application means 
+
+we simply go to this this path made changes here
+
+cd /var/lib/docker/volumes/
+
+cd volumes/
+cd ramavolume/
+cd _data/
+vim index.html
+<h1>this is data </h1>
+<h2>this is version-2 </h2>
+
+:wq
+
+here if we done made changes inside a volume means the changes will also done in all the containers as well
+
+
+as of now first we created the volume and do attached the volume to a container
+
+now we will do both at a time 
+while creating the container we can able to define the volume as well like below
+
+docker run -itd --name cont4 -p 4444:80 -v newapp:/usr/local/apache2/htdocs/ httpd
+
+# cont4-------> container name, -v -------> menas volume, newapp--------->volume name, /usr/local/apache2/htdocs/------->httpd default path and thhis path we are
+going to do mount,   httpd-------> base image
+
+cd /var/lib/docker/volumes/newapp/_data/
+
+vim index.html
+
+<h1>this is data </h1>
+
+:wq
+
+do check we can able to access the application or not
+
+IP:container port number
+
+docker volume inspect newapp
+# if we want to get the full information of the volume
+
+
+as of now we done data replication 
+container to container
+
+
+now we will do host to container
+host means ec2-instance where the docker has installed
+
+for example i have a folder in my ec2-instance means if i create a file here means the file must be go to a container this is host to container and
+if i create a file in container means need to get the file in host as well
+
+lets doin practical way by taking one git repo
+
+yum install git -y
+
+git clone url
+
+git checkout master
+
+cd codefolder/
+
+now i have to move all here existing fies to a container like host to container concept
+while doing this host to container concept volumes can't be created anywhere
+
+docker run -itd --name prany -p 1111:80 -v $(pwd):/usr/share/nginx/html nginx
+# pranay--->container name, -v -------> volume, $(pwd)-------> present working directory, /usr/share/nginx/html------>nginx default path
+
+publicIP:1111
+
+able to access application
+
+incase in here files got deleted in host means data will be get deleted in a container as well So, this will be can't used in real times
+
+most preferred thing in real time is create a volume and attach a continer to it
+
+now for example we created a one volume and attached the volume to a container and done mount as well
+
+for suppose if someone deleted the data in a container means the data will be get deleted in volume as well
+this is major drawback
+in this cases we will use read only permissions mounting to a container concept
+means for mount point inside a container we will set read only acess like below
+
+docker run -itd --name container --mount src=babu,destination=/gorantla:ro ubuntu
+docker run -itd --name container --mount -v volumename:/myapp:ro ubuntu
+#cont7------> container name, babu----> volume name, /gorantla,ro------> mount point inside a container with read only access
+
+docker run -itd --name prany -p 1111:80 -v volumename:/usr/share/nginx/html nginx
+# this is the command to create a container and defining volume as well
+
+
+
+ 85  docker run -itd --name container --mount src=babu,destination=/gorantla,ro ubuntu
+   
