@@ -397,6 +397,22 @@ they will create with folder name and that folder path name as well
 to avoid the manual work we are doing like this way
 
 
+if we want to do in jenkins stages are below
+
+stage:1
+code
+stage:2
+cqa
+stage:3
+code-build
+stage:4
+atrifact
+stage:5
+docker-compose build
+stage:6
+docker-compose up
+
+
 
 
 
