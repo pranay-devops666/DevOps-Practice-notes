@@ -274,6 +274,5 @@ docker run -itd --name prany -p 1111:80 -v volumename:/usr/share/nginx/html ngin
 # this is the command to create a container and defining volume as well
 
 
-
- 85  docker run -itd --name container --mount src=babu,destination=/gorantla,ro ubuntu
+docker run -itd --name container --mount src=babu,destination=/gorantla,ro ubuntu----------> this will work
    
