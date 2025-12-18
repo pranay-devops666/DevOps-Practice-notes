@@ -414,6 +414,39 @@ docker-compose up
 
 
 
+Compose install commands:
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+sudo yum install -y python3-pip
+sudo pip3 install docker-compose
+docker-compose --version
+
+
+
+
+
+
+Todays commands:
+docker-compose up -d
+docker-compose down
+docker-compose stop
+docker-compose start
+docker-compose build
+docker-compose ps
+docker-compose logs
+docker-compose pause
+docker-compose unpause
+docker-compose config
+
+
+
+
+
+
+
+
+
 
 
 
