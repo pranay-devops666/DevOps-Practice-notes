@@ -275,4 +275,7 @@ docker run -itd --name prany -p 1111:80 -v volumename:/usr/share/nginx/html ngin
 
 
 docker run -itd --name container --mount src=babu,destination=/gorantla,ro ubuntu----------> this will work
+
+we need to use , for a existing volume for giving read only permission access to a container here
+for newly createing we can use : for giving read only permission access to a container here
    
