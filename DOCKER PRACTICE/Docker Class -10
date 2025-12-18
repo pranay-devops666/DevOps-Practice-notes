@@ -29,7 +29,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 sudo yum install -y python3-pip
 sudo pip3 install docker-compose
-docker-compose version
+docker-compose --version
 
 
 # Download the current stable release of Docker Compose
@@ -46,6 +46,9 @@ sudo pip3 install docker-compose
 docker-compose version
 
 
+to create multiple services we are using docker-compose(here services means containers)
+if we create one service means that service will gonna create a conatiner
+
 now write file for docker-compose
 
 docker-compose file must be a specific name like compose.yml, compose.yaml, docker-compose.yml, docker-compose.yaml
@@ -55,8 +58,358 @@ vim docker-compose
 
 yaml file starts with ---
 
+docker run -itd --name cont1 -p 1111:80 nginx ----------> command to create conatiner based on this command this is related to below docker compose file
+
+vim docker-compose.yml
 ---
 version: "3"
+services:
+  movie:
+    container_name: cont1
+    image: shaikmustafa/paytm:movie
+    ports:
+      - "8081:80"
+
+  bus:
+    container_name: cont2
+    image: shaikmustafa/paytm:bus
+    ports:
+      - "8082:80"
+
+  bank:
+    container_name: cont3
+    image: shaikmustafa/paytm:bank
+    ports:
+      - "8083:80"
+
+save and exit in this file 
+
+now execute this docker compose file
+if we need to execute this compose file means command was docker-compose up -d
+
+docker-compose up -d
+
+after executing this docker-compose file 
+seperate network will be created in name as root_default for all these services of docker-compose file
+
+if we want to create network for each service seperately means also we can do like this below
+
+first check containers created or not
+
+if we give this command means (docker ps )we can see manually created containers and containers created by after executing the docker-compose file as well
+
+now i want to see the containers which are created by after executing the docker-compose file only command was
+
+docker-compose ps
+
+now we can access the appication by ece-instance publicIP:container number
+
+http://18.213.4.140:8081/
+http://18.213.4.140:8082/
+http://18.213.4.140:8083/
+
+as of now we have taken the images from dockerhub
+
+for suppose if we have the code in local system means
+
+remove the file what we created above ----->docker-compose.yml
+
+rm -rf *
+
+mkdir swiggy
+
+cd swiggy/
+
+mkdir instamart food-delivery genie dineout
+
+for these 4 services we need to write the code
+1. instamart 
+2. food-delivery 
+3. genie 
+4. dineout
+
+cd instamart/
+
+vim index.html
+
+<h1>this is instamart service from swiggy application </h1>
+
+what we need to deploy this application means is 
+we need Dockerfile
+
+vim Dockerfile
+
+FROM nginx
+COPY index.html /usr/share/nginx/html/
+
+save & exit
+
+cd ..
+
+cd food-delivery/
+
+vim index.html
+
+<h1>this is food-delivery service from swiggy application </h1>
+
+vim Dockerfile
+
+FROM nginx
+COPY index.html /usr/share/nginx/html/
+
+save & exit
+
+cd ..
+
+cd genie/
+
+vim index.html
+
+<h1>this is genie service from swiggy application </h1>
+
+vim Dockerfile
+
+FROM nginx
+COPY index.html /usr/share/nginx/html/
+
+save & exit
+
+cd ..
+
+cd dineout/
+
+vim index.html
+
+<h1>this is dineout service from swiggy application </h1>
+
+vim Dockerfile
+
+FROM nginx
+COPY index.html /usr/share/nginx/html/
+
+save & exit
+
+install tree package to view clear vision
+
+yum install tree -y
+
+tree
+
+[root@ip-172-31-25-199 swiggy]# tree
+.
+├── dineout
+│   ├── Dockerfile
+│   └── index.html
+├── food-delivery
+│   ├── Dockerfile
+│   └── index.html
+├── genie
+│   ├── Dockerfile
+│   └── index.html
+└── instamart
+    ├── Dockerfile
+    └── index.html
+
+now we will do create services take based on docker-compose file
+
+what we need to need to create services means image
+
+first need to build the images
+
+docker build -t dineout-img dineout(here dineout-img------> image name and  dineout-----> folder name where the Dockerfile & code file exist)
+
+image willl be created now
+
+docker build -t food-delivery-img food-delivery
+
+docker build -t genie-img genie
+
+docker build -t instamart-img instamart
+
+all images got created
+
+docker images
+
+now we have all the images based on those images we can do create the services using docker-compose file
+
+vim compose.yml
+
+---
+version: "3"
+services:
+  dineout:
+    container_name: dineout-cont
+    image: dineout-img
+    ports:
+      - "1111:80"
+
+  food-delivery:
+    container_name: food-delivery
+    image: food-delivery-img
+    ports:
+      - "2222:80"
+
+  genie:
+    container_name: genie
+    image: genie-img
+    ports:
+      - "3333:80"
+
+  instamart:
+    container_name: instamart
+    image: instamart-img
+    ports:
+      - "4444:80"
+
+save & exit
+
+previosly written docker-compose and now written docker-compose the difference is 
+previously written docker-compose file we used image and taken image from dockerhub
+now we taken image from locally in our system in a particular path
+
+docker-compose up -d
+
+docker-compose ps
+
+now we can access the appication by ece-instance publicIP:container number
+
+
+http://18.213.4.140:1111/
+http://18.213.4.140:2222/
+http://18.213.4.140:3333/
+http://18.213.4.140:4444/
+
+
+all services are created, but in a real time we can't do like this way manner
+
+why because means as of now we have 4 services here in real time we have a plenty 40 services means in this 40 services i done made changes in some 10 services 
+if we done made changes in a service means first we need to do build the Dockerfile and update the image and need to create one new container as well
+
+if we done here means how it will looks lets see
+
+cd instamart/
+
+vim index.html
+
+<h1>this is instamart service from swiggy application </h1>
+<h2>this is version-2
+
+here we made code changes in instamart service
+when ever we done made changes the code in a particular service means 
+we need to build the Dockerfile again
+
+docker build -t instamart-img instamart
+
+now the question is the newly made changes will come into a service?
+NO
+
+if we need to get it means again we need to execute docker-compose file
+
+docker-compose up -d
+
+[root@ip-172-31-25-199 swiggy]# docker-compose up -d
+Recreating instamart ... 
+dineout-cont is up-to-date
+genie is up-to-date
+Recreating instamart ... done
+
+in here Recreating instamart means daa has been updated in instamart service and Recreated in  instamart service
+
+In here why we don't use in real time means 
+
+for example i have 40 services in this 40 i made changes in some 10 services means then now how many dockerfiles need be to build is 10 
+i need to give 10 times this command
+docker build -t image path &
+docker-compose up -d
+
+this is all manual work
+
+to ignore this all manual works we can do build image locally only
+in previosly we build the image induvidually and using that image in docker-compose file
+now we don't need to build the images induvidually
+
+we can build the images form the docker-compose file directly
+
+now we can do it practically
+
+remove all the containers created from the docker-compose
+
+docker-compose down------> command to delete containers created by docker-compose
+
+docker rm $(docker ps -a -q)
+
+docker rmi $(docker images)
+
+now open this compose.yml file
+
+in real time we don't need to give image while using image
+
+
+vim compose.yml
+---
+version: "3"
+services:
+  dineout:
+    container_name: dineout-cont
+    build: ./dineout/
+    ports:
+      - "1111:80"
+
+  food-delivery:
+    container_name: food-delivery
+    build: ./food-delivery/
+    ports:
+      - "2222:80"
+
+  genie:
+    container_name: genie
+    build: ./genie/
+    ports:
+      - "3333:80"
+
+  instamart:
+    container_name: instamart
+    build: ./instamart/
+    ports:
+      - "4444:80"
+
+save & exit
+
+docker-compose build
+
+docker-compose up -d
+
+services has been created with these simple comands
+
+docker-compose build
+
+docker-compose up -d
+
+
+
+in here we didn't mentioned images name in docker-compose (vim compose.yml) file 
+how they will create means 
+in docker-compose (vim compose.yml) file we mentioned as 
+build: ./instamart/-------(build ./foldername/)
+
+they will create with folder name and that folder path name as well
+
+to avoid the manual work we are doing like this way
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
