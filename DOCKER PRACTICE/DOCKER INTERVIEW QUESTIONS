@@ -25,3 +25,5 @@ How to push docker images to registry
 
 1. what is compose and how it works
 2. write a compose file
+what is swarm and how it works
+diff b/w compose and swarm
