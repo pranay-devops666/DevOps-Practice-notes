@@ -1,3 +1,222 @@
 DOCKER SWARM
 DOCKER SWARM is completely oppsoite to DOCKER-COMPOSE
 
+
+DOCKER SWARM---------> it is used to create single service at a time on multiple hosts.
+
+DOCKER STACK---------> it is used to create multiple services at a time on multiple hosts.
+
+lets start docker swarm
+
+
+docker swarm we can called it as archestration tool its an archestration service 
+archestration means a group of servers
+docker swarm archestration tool is nothing but a group of servers
+
+one will be swarm-node-manager
+another will be swarm-node-worker
+
+for example in a projec it has 3 tasks 
+
+and we have 3 workers and 1 manger
+
+manager will distribute all 3 tasks to 3 workers 
+
+manager will be managing
+
+workers will be running or working the project
+
+major advantage of having in docker-swarm is it has self-healing capability
+
+self-healing capability means if one container deleted means another will be created automatically
+
+we also done scaling in here as well manual only 
+scaling means ---------> increasing or decreasing 
+
+high availabilty also there in swarm
+
+a group of data centenrs is nothing but region and we can get high availabilty of these
+
+launch 1 master server and 2 worker servers
+
+here launch manager server in one zone, worker1 in another zone and weorker2 on another zone seperatley
+
+t3.micro----->sg---->launch
+
+launch all instances
+
+install docker on all servers/instances
+
+
+yum install docker -y && systemctl start docker
+
+
+
+now we will do master slave connection like below
+
+cluster means group of servers
+
+give this below command on manager instance
+docker swarm init
+
+after giivng this above command it will give toke like below
+
+docker swarm join --token SWMTKN-1-40k56utslhyg18yxugwuwoc3lmufpkbg98qphieiq2dob7kf0e-77zbcaxtomcuevj0g2ffxx3vr 172.31.26.20:2377
+
+giv ethis above command on worker1 and worker2 instances to join worker node
+
+This node joined a swarm as a worker.
+
+[root@manager ~]# docker node ls
+ID                            HOSTNAME   STATUS    AVAILABILITY   MANAGER STATUS   ENGINE VERSION
+u8sgzelr5zph8dy5q5z9bo5sq *   manager    Ready     Active         Leader           25.0.13
+ljwhnloyob1ou64anqzm1yorm     worker1    Ready     Active                          25.0.13
+rmvoy2bciybwybuygc0tvtul8     worker2    Ready     Active                          25.0.13
+
+
+cluster setup is done
+
+now we need to create a service here like below
+
+give this command on manager instance
+
+docker service create --name myservice --replicas=1 --publish 8081:80 shaikmustafa/dm
+
+in here we need to give image as which the image exist in dockerhub
+
+local image will not be accepted
+
+
+[root@manager ~]# docker service ls
+ID             NAME        MODE         REPLICAS   IMAGE                    PORTS
+2kypp4559ast   myservice   replicated   1/1        shaikmustafa/dm:latest   *:8081->80/tcp
+[root@manager ~]#
+
+
+now we need to know where the container has been created
+
+docker ps
+
+docker service ps servicename ------------> it will show in which node the container has been created it has create din manager, worker1 or worker2 like that
+
+
+[root@manager ~]# docker service ps myservice
+ID             NAME          IMAGE                    NODE      DESIRED STATE   CURRENT STATE           ERROR     PORTS
+0bu2azp0sefq   myservice.1   shaikmustafa/dm:latest   manager   Running         Running 3 minutes ago             
+[root@manager ~]#
+
+
+
+
+
+now the container has create don manager node manager instace then the application will work on only on manager server or every servers 
+the answer is every server
+
+http://100.31.110.43:8081/
+
+http://3.95.150.212:8081/
+
+http://35.173.255.5:8081/
+
+it is sworking on every server
+
+
+remove all containers in manager instance
+
+docker ps 
+
+docker rm -f contiainername
+
+after deleting old container in manager
+
+it has created in worker2
+
+docker service scale myservice=3----------> give this command in manager
+#myservice --------> service name
+
+
+[root@manager ~]# docker service ps myservice
+ID             NAME              IMAGE                    NODE      DESIRED STATE   CURRENT STATE            ERROR                         PORTS
+naxgbhhtr6q3   myservice.1       shaikmustafa/dm:latest   worker2   Running         Running 5 minutes ago                                  
+103vensbh794    \_ myservice.1   shaikmustafa/dm:latest   manager   Shutdown        Failed 5 minutes ago     "task: non-zero exit (137)"   
+0bu2azp0sefq    \_ myservice.1   shaikmustafa/dm:latest   manager   Shutdown        Failed 5 minutes ago     "task: non-zero exit (137)"   
+s7dfuk0f52v7   myservice.2       shaikmustafa/dm:latest   manager   Running         Running 50 seconds ago                                 
+s7eznzs6ftf7   myservice.3       shaikmustafa/dm:latest   worker1   Running         Running 47 seconds ago                                 
+[root@manager ~]#
+
+
+
+in docker swarm self-healing is there 
+manual scaling
+high availability
+upgrade and roll back
+
+
+first remove all service sin manager
+
+
+in here when we remove a service the containers will be get removed automatically and should not be created again those containers 
+why because we removed all service as well
+
+
+rollback and upgrade means doing these below commands
+
+docker service create --name client --replicas=3 --publish 1111:80 shaikmustafa/paytm:bank
+
+docker service update client --image=shaikmustafa/paytm:movie
+
+
+docker service rollback client
+
+
+
+
+
+
+
+docker swarm all commands
+
+
+1  hostnamectl set-hostname "manager"
+    2  exit
+    3  yum install docker -y && systemctl start docker
+    4  docker swarm init
+    5  docker node ls
+    6  docker service create myservice --replicas=1 --publish8081:80 shailmustafa/dm
+    7  docker service ls
+    8  docker service rm d73i3shs7lgk
+    9  docker service ls
+   10  docker service create --name myservice --replicas=1 --publish8081:80 shailmustafa/dm
+   11  docker service create --name myservice --replicas=1 --publish 8081:80 shailmustafa/dm
+   12  docker service ls
+   13  dokcer service rm myservice
+   14  dokckr service rm myservice
+   15  docker service rm myservice
+   16  docker service ls
+   17  docker service create --name myservice --replicas=1 --publish 8081:80 shaikmustafa/dm
+   18  docker service ls
+   19  docker ps
+   20  docker service ps myservice
+   21  docker ps
+   22  docker rm -f myservice.1.0bu2azp0sefqy70rxdbut7d5x
+   23  docker ps
+   24  docker ps -a
+   25  docker rm -f myservice.1.103vensbh7940jazvbcpv1ra4
+   26  docker ps -a
+   27  docker ps
+   28  docker service scale myservice=3
+   29  docker service ps myservice~
+   30  docker service ps myservice
+   31  docker service ls
+   32  docker service rm myservice
+   33  docker service ls
+   34  docker service update client --image=shaikmustafa/paytm:movie
+   35  docker service create --name client --replicas=3 --publish 1111:80 shaikmustafa/bank
+   36  docker service ls
+   37  docker service rm client
+   38  docker service ls
+   39  docker service create --name client --replicas=3 --publish 1111:80 shaikmustafa/paytm:bank
+   40  docker service update client --image=shaikmustafa/paytm:movie
+   41  docker service ls
+   42  docker service rollback client
+   43  history
