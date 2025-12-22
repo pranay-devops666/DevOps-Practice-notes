@@ -16,5 +16,119 @@ launch all instances and install docker on every instances
 
 yum install docker -y && systemctl start docker
 
+docker swarm init
+docker node ls
+
 after this install docker-compose in all servers
+
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+# Apply executable permissions
+sudo chmod +x /usr/local/bin/docker-compose
+# Create a symbolic link
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+# Install using pip (Python package manager)
+sudo yum install -y python3-pip
+sudo pip3 install docker-compose
+#check version
+docker-compose --version
+systemctl status docker
+
+vim compose.yml
+---
+services:
+  devops:
+    image: shaikmustafa/dm
+    ports:
+      - "8081:80"
+    deploy:
+      replicas: 6
+
+  azure:
+    image: shaikmustafa/dm
+    ports:
+      - "8082:80"
+    deploy:
+      replicas: 4
+
+:wq
+
+
+docker stack deploy babu --compose-file=compose.yml
+
+
+[root@manager ~]# docker service ls
+ID             NAME          MODE         REPLICAS   IMAGE                    PORTS
+taq0601c2kt9   babu_azure    replicated   4/4        shaikmustafa/dm:latest   *:8082->80/tcp
+plpjqf8q88qv   babu_devops   replicated   6/6        shaikmustafa/dm:latest   *:8081->80/tcp
+
+
+[root@manager ~]# docker service ps babu_azure
+ID             NAME           IMAGE                    NODE       DESIRED STATE   CURRENT STATE           ERROR     PORTS
+kqvh2ndpbd74   babu_azure.1   shaikmustafa/dm:latest   worker-1   Running         Running 5 minutes ago             
+nceqpl0k1zea   babu_azure.2   shaikmustafa/dm:latest   worker-1   Running         Running 5 minutes ago             
+wg7nfcl44a2i   babu_azure.3   shaikmustafa/dm:latest   worker-2   Running         Running 5 minutes ago             
+znqol5nb8yjz   babu_azure.4   shaikmustafa/dm:latest   manager    Running         Running 5 minutes ago
+
+
+now try to access the application with every ec2-instance manager, worker1 and worker2 as well
+
+IP:container number
+
+http://100.29.184.21:8081/
+http://100.29.184.21:8082/
+
+
+docker stack config -c compose.yml
+
+[root@manager ~]# docker stack config -c compose.yml
+version: "3.12"
+services:
+  azure:
+    deploy:
+      replicas: 4
+    image: shaikmustafa/dm
+    ports:
+    - mode: ingress
+      target: 80
+      published: 8082
+      protocol: tcp
+  devops:
+    deploy:
+      replicas: 6
+    image: shaikmustafa/dm
+    ports:
+    - mode: ingress
+      target: 80
+      published: 8081
+      protocol: tcp
+[root@manager ~]# 
+
+docker stack ls
+
+[root@manager ~]# docker stack ls
+NAME      SERVICES
+babu      2
+
+
+[root@manager ~]# docker stack deploy babu -c compose.yml
+Updating service babu_azure (id: taq0601c2kt9xdrjxx27ivm78)
+Updating service babu_devops (id: plpjqf8q88qvyrjattdmjg6sd)
+[root@manager ~]# 
+
+[root@manager ~]# docker stack services babu
+ID             NAME          MODE         REPLICAS   IMAGE                    PORTS
+taq0601c2kt9   babu_azure    replicated   4/4        shaikmustafa/dm:latest   *:8082->80/tcp
+plpjqf8q88qv   babu_devops   replicated   6/6        shaikmustafa/dm:latest   *:8081->80/tcp
+[root@manager ~]# 
+
+
+as of now all we done with command like cli only
+
+but now using the docker stack we can able to install portainer ------> it is an 3rd party tool in real time it doesn't use anyone
+
+it will work on gui
+
+
+
+
 
