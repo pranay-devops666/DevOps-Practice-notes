@@ -1,1 +1,363 @@
 DOCKER COMPOSE PART-2
+launch an instance-----> t3.micro-----> security group--------> ebs volume ------> 15-----> launch instance
+
+install docker & docker-compose 
+
+yum install docker -y && systemctl start docker
+
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+# Apply executable permissions
+sudo chmod +x /usr/local/bin/docker-compose
+# Create a symbolic link
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+
+# Install using pip (Python package manager)
+sudo yum install -y python3-pip
+sudo pip3 install docker-compose
+
+#check version
+docker-compose --version
+
+as of now upto docker-compose part-1 we learned 1. containers & 2. images in the 4 major pillars of docker-compose file
+now we will learn remaining 1. networks 4.volumes
+how to integrate volumes & networks for  a docker-compose file
+
+lets see here
+
+vim compose.yml
+---
+services:
+  dev:
+    container_name: cont-1
+    image: nginx
+    ports:
+      - "8081:80"
+    volumes:
+      - appvolumes:/usr/share/nginx/html/
+
+
+  aws:
+    container_name: cont-2
+    image: httpd
+    ports:
+      - "8082:80"
+    volumes:
+      - dbvolume:/usr/local/apache2/htdocs/
+
+volumes:
+  appvolumes:
+  dbvolume:
+
+
+docker-compose up -d
+
+docker volume ls
+
+
+now we can access the application
+http://54.91.101.57:8081/
+http://54.91.101.57:8082/
+
+now if we want to keep the code or data means we need to go volume default path
+
+cd /var/lib/docker/volumes/root_appvolumes/_data
+
+vim index.html
+in this file here we will make changes
+
+:wq
+
+now observe the changes has made reflected over there or not
+
+it works after making the data changes in volumes
+
+
+in this above docker-compose file 
+
+we created 2 services and 2 volumes as well and done mount to the services 
+
+
+now as same pattern we can attach the network as well
+
+before going to do down all the containers why because if we execute again this docker-compose file means we will get an error
+
+
+
+docker-compose down
+all containers got deleted here
+
+now we will write docker-compose file to create networks
+
+
+vim compose.yml
+---
+services:
+  dev:
+    container_name: cont-1
+    image: nginx
+    ports:
+      - "8081:80"
+    volumes:
+      - appvolumes:/usr/share/nginx/html/
+    networks:
+      - appnetwork
+
+
+  aws:
+    container_name: cont-2
+    image: httpd
+    ports:
+      - "8082:80"
+    volumes:
+      - dbvolume:/usr/local/apache2/htdocs/
+    networks:
+      - dbnetwork
+
+volumes:
+  appvolumes:
+  dbvolume:
+
+networks:
+  appnetwork:
+    driver: bridge
+  dbnetwork:
+    driver: bridge
+
+:wq
+
+
+docker-compose up -d
+
+docker-compose ps -a
+docker-compose ps
+
+docker network ls
+
+we need to do connection here network to network how mens below
+
+first need to check pinging or not
+
+docker inspect cont-1
+copy cony-1 IP
+
+docker exec -it cont-1 bash
+
+apt update -y
+
+apt install iputils-ping -y
+
+ping 172.19.0.2
+
+ctrl+p+q
+
+vim compose.yml
+---
+services:
+  dev:
+    container_name: cont-1
+    image: nginx
+    ports:
+      - "8081:80"
+    volumes:
+      - appvolumes:/usr/share/nginx/html/
+    networks:
+      - appnetwork
+      - dbnetwork
+
+
+  aws:
+    container_name: cont-2
+    image: httpd
+    ports:
+      - "8082:80"
+    volumes:
+      - dbvolume:/usr/local/apache2/htdocs/
+    networks:
+      - dbnetwork
+      - appnetwork
+
+volumes:
+  appvolumes:
+  dbvolume:
+
+networks:
+  appnetwork:
+    driver: bridge
+  dbnetwork:
+    driver: bridge
+
+:wq
+
+docker-compose up -d
+
+now go to cont-1 and check with ping
+
+it is ow recreated again we need to install ping package in the container
+
+docker exec -it cont-1 bash
+
+apt update -y
+
+apt install iputils-ping -y
+
+ping 172.19.0.2
+
+it is pinging working fine
+
+now go to cont-2 and check over there as well to both the networks are communicationg each other or not
+
+docker exec -it cont-2 bash
+
+apt update -y
+
+apt install iputils-ping -y
+
+ping 172.19.0.0
+
+it is pinging working fine
+
+
+now if bymistake container got deleted here means 
+in here if the one container got deleted means i need to get automatically container another one 
+
+lets do that automationis called as self healing
+
+for that we need to use replicas in sam compose file
+
+replicas means no of containers
+
+vim compose.yml
+---
+services:
+  dev:
+    image: nginx
+    deploy:
+      replicas: 2
+    ports:
+      - "80"
+    volumes:
+      - appvolumes:/usr/share/nginx/html/
+    networks:
+      - appnetwork
+      - dbnetwork
+
+
+  aws:
+    image: httpd 
+    deploy:
+      replicas: 2
+    ports:
+      - "80"
+    volumes:
+      - dbvolume:/usr/local/apache2/htdocs/
+    networks:
+      - dbnetwork
+      - appnetwork
+
+
+volumes:
+  appvolumes:
+  dbvolume:
+
+networks:
+  appnetwork:
+    driver: bridge
+  dbnetwork:
+    driver: bridge
+
+:wq
+
+docker-compose up -d
+
+
+now i want to increase no of containers here in 2 ways
+1. way in compose file
+2. through command
+
+
+vim compose.yml
+---
+services:
+  dev:
+    image: nginx
+    deploy:
+      replicas: 3
+    ports:
+      - "80"
+    volumes:
+      - appvolumes:/usr/share/nginx/html/
+    networks:
+      - appnetwork
+      - dbnetwork
+
+
+  aws:
+    image: httpd
+    deploy:
+      replicas: 3
+    ports:
+      - "80"
+    volumes:
+      - dbvolume:/usr/local/apache2/htdocs/
+    networks:
+      - dbnetwork
+      - appnetwork
+
+
+volumes:
+  appvolumes:
+  dbvolume:
+
+networks:
+  appnetwork:
+    driver: bridge
+  dbnetwork:
+    driver: bridge
+
+:wq
+
+
+technically we called as it is "scale-in" increasing the no.of containers
+if suppose decreasing the no.of containers called as "scale-out"
+
+for scale-out
+decrease replicas: here in compose file
+
+through command 
+
+docker-compose up --scale dev=4 -d
+# here dev means service name
+
+technically called it as scaling based on the request we can either increase or decrease the no.of systems/containers
+
+as of now we done manual way only
+
+scaling ha stwo types
+1. manual scaling---------> mentioning here how many replicas need to give here in compose file
+2. auto scaling -----------> for example plenty of users are going accessing means no.of requets increasing means need to increase no of containers automatically
+to handle the request
+
+for billing adjustment if the users request are less means unused containers also should be removed automatically this is called auto scaling
+
+for this auto-scaling we use kubernetes
+
+in docker-compose there is no auto-scaling and no self-healig as well
+
+
+to overcome it means we can use kubernetes
+
+in docker-compose all need to be proficient to integrate all these below 4 using docker-compose
+1. containers 
+2.images
+3.networks
+4.volumes
+
+
+
+
+
+
+
+
+
+ 
