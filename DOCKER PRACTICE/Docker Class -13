@@ -1,0 +1,20 @@
+DOCKER STACK
+
+DOCKER STACK -------------> It is used to create multiple services on multiple hosts
+
+STACK = COMPSOE + SWARM
+
+first launch 3 servers 
+
+t3.mocro----->keypair----->sg----->launch instance
+
+1. for manager
+2. for worker1
+3. for worker2
+
+launch all instances and install docker on every instances
+
+yum install docker -y && systemctl start docker
+
+after this install docker-compose in all servers
+
