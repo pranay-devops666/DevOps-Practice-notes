@@ -1,4 +1,6 @@
 DOCKER COMPOSE PART-1
+
+DOCKER-COMPOSE ----------> it is use dto create multiple services in a single host
 IN DOCKER WE HAVE 4 MAJOR PILLARS
 1. DOCKER IMAGES
 2. DOCKER CONTAINERS 
