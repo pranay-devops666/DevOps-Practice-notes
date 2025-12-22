@@ -128,6 +128,25 @@ but now using the docker stack we can able to install portainer ------> it is an
 
 it will work on gui
 
+[root@manager ~]# docker stack ps portainer
+ID             NAME                                        IMAGE                           NODE       DESIRED STATE   CURRENT STATE            ERROR     PORTS
+i1bslepfgui2   portainer_agent.h5elvxmrzptex0iajtlclw5f1   portainer/agent:2.16.2          worker-2   Running         Running 42 seconds ago             
+ef8zt2vrt86q   portainer_agent.mafq7q46rk7vwn33z28n1pp4u   portainer/agent:2.16.2          manager    Running         Running 41 seconds ago             
+1ajp2z0iuhin   portainer_agent.qaey0emfkrcpsrza3hky12hvc   portainer/agent:2.16.2          worker-1   Running         Running 42 seconds ago             
+yiret29pl7ja   portainer_portainer.1                       portainer/portainer-ce:2.16.2   manager    Running         Running 39 seconds ago             
+[root@manager ~]#
+
+
+http://100.29.184.21:9000/
+
+publicIP:9000--------->ec2-instanec publicIP of managerand 9000 is portainer default port number
+
+
+portainer dashboard is the DOCKER ENGINE
+
+
+
+
 
 
 
