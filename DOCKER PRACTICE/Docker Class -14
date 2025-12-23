@@ -1,1 +1,161 @@
-DOCKER ECR & EKS
+DOCKER ECR & ECS
+
+
+ECR = ELASTIC CONTAINER REGISTRY
+ECS = ELASTIC CONTAINER SERVICE
+
+first launch an instance to create image
+
+install docker in the instance
+
+yum install docker -y && systemctl start docker
+
+yum install git -y
+
+git clone https://github.com/devops0014/tic-tac-toe-docker.git
+
+cd tic-tac-toe-docker/
+
+[root@ip-172-31-79-70 ~]# cd tic-tac-toe-docker/
+[root@ip-172-31-79-70 tic-tac-toe-docker]# ll
+total 24
+-rw-r--r--. 1 root root    40 Dec 23 02:38 Dockerfile
+-rw-r--r--. 1 root root  1477 Dec 23 02:38 index.html
+-rw-r--r--. 1 root root   934 Dec 23 02:38 tic.css
+-rw-r--r--. 1 root root 12265 Dec 23 02:38 tic.js
+[root@ip-172-31-79-70 tic-tac-toe-docker]# 
+
+we need to build this Dockerfile here
+
+in aws dashboard search as ecr
+
+click create----> myrepo--->create----->ok
+
+
+now open that myrepo
+
+now we need to push the image inside in it
+
+select view push commands
+
+between these two services EC2 & ECR there is no communication between them its need permission to get communicate 
+
+that permission will be provided by IAM service 
+
+IAM ------> Idendity Access Management
+
+as of now IAM --------> it needs to allow permission between EC2 & ECR
+
+
+now create one role in aws dashboard
+
+search as IAM ------> select roles---> create a new role---->need to be attach this new role to ec2
+
+
+select roles -----> create new role-----> use case: select ec2-----> select adminroles make it tick-----> create role--->done
+
+now we need to attach this role to ec2 instance
+
+
+select first created instanec-----> select actions-----> select security------> select existing role-------> select here what we created the role ---> select and update IAM role------> done
+
+search ecr----> select what we created myrepo-----> open it-----> select view push commands -------> copy first command -----> and paste here on ec2 instance like below
+
+
+
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 061039784179.dkr.ecr.us-east-1.amazonaws.com
+
+
+[root@ip-172-31-79-70 tic-tac-toe-docker]# aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 061039784179.dkr.ecr.us-east-1.amazonaws.com
+WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+
+same do copy and paste remaining 3 commands like below
+
+
+[root@ip-172-31-79-70 tic-tac-toe-docker]# docker build -t myrepo .
+[+] Building 4.0s (7/7) FINISHED                                                                                                                        docker:default
+ => [internal] load build definition from Dockerfile                                                                                                              0.0s
+ => => transferring dockerfile: 137B                                                                                                                              0.0s
+ => [internal] load metadata for docker.io/library/nginx:latest                                                                                                   0.3s
+ => [internal] load .dockerignore                                                                                                                                 0.0s
+ => => transferring context: 2B                                                                                                                                   0.0s
+ => [internal] load build context                                                                                                                                 0.0s
+ => => transferring context: 51.53kB                                                                                                                              0.0s
+ => [1/2] FROM docker.io/library/nginx:latest@sha256:fb01117203ff38c2f9af91db1a7409459182a37c87cced5cb442d1d8fcc66d19                                             3.4s
+ => => resolve docker.io/library/nginx:latest@sha256:fb01117203ff38c2f9af91db1a7409459182a37c87cced5cb442d1d8fcc66d19                                             0.0s
+ => => sha256:fb01117203ff38c2f9af91db1a7409459182a37c87cced5cb442d1d8fcc66d19 10.23kB / 10.23kB                                                                  0.0s
+ => => sha256:547c8c6863a88abd0c987779413489ff0e9a693c24d2d88ce9eb8515e0ae0335 2.29kB / 2.29kB                                                                    0.0s
+ => => sha256:576306625d797a52045ad158b601d5a011f7a7f16e4ccc909809f02dd6047c37 8.73kB / 8.73kB                                                                    0.0s
+ => => sha256:1733a4cd59540b3470ff7a90963bcdea5b543279dd6bdaf022d7883fdad221e5 29.78MB / 29.78MB                                                                  0.4s
+ => => sha256:5b219a92f92aeb674b0b29811b447d120ce69b41d21cfca56f90ad323aff91a2 29.99MB / 29.99MB                                                                  0.5s
+ => => sha256:ee3a09d2248a2df379f9868e31e578994110589e1f118a98396aeebcc9316b8d 628B / 628B                                                                        0.1s
+ => => sha256:7382b41547b8efa59d4103ac9610d7e359eb989e675faf7e0d3e7445496bba94 953B / 953B                                                                        0.1s
+ => => sha256:9ee60c6c0558552ff0a2548f4b6941e4aa276937fb1cd8c76a94e73fe75d69ba 402B / 402B                                                                        0.2s
+ => => sha256:114e699da838b7a4a5dd75807233341d8f9a392ee2360d4bfe2b0680df4965f8 1.21kB / 1.21kB                                                                    0.2s
+ => => sha256:5b5fa0b64d74b2ce9915f89c1be1b98a3400a7ca4fb4654cec353db54342c2a9 1.40kB / 1.40kB                                                                    0.3s
+ => => extracting sha256:1733a4cd59540b3470ff7a90963bcdea5b543279dd6bdaf022d7883fdad221e5                                                                         1.5s
+ => => extracting sha256:5b219a92f92aeb674b0b29811b447d120ce69b41d21cfca56f90ad323aff91a2                                                                         1.0s
+ => => extracting sha256:ee3a09d2248a2df379f9868e31e578994110589e1f118a98396aeebcc9316b8d                                                                         0.0s
+ => => extracting sha256:7382b41547b8efa59d4103ac9610d7e359eb989e675faf7e0d3e7445496bba94                                                                         0.0s
+ => => extracting sha256:9ee60c6c0558552ff0a2548f4b6941e4aa276937fb1cd8c76a94e73fe75d69ba                                                                         0.0s
+ => => extracting sha256:114e699da838b7a4a5dd75807233341d8f9a392ee2360d4bfe2b0680df4965f8                                                                         0.0s
+ => => extracting sha256:5b5fa0b64d74b2ce9915f89c1be1b98a3400a7ca4fb4654cec353db54342c2a9                                                                         0.0s
+ => [2/2] COPY . /usr/share/nginx/html                                                                                                                            0.1s
+ => exporting to image                                                                                                                                            0.0s
+ => => exporting layers                                                                                                                                           0.0s
+ => => writing image sha256:a11c22de9cb79a7c64b87e189bf49b9496c66b3f751c2c94237b877a91e4e89d                                                                      0.0s
+ => => naming to docker.io/library/myrepo                                                                                                                         0.0s
+[root@ip-172-31-79-70 tic-tac-toe-docker]# docker tag myrepo:latest 061039784179.dkr.ecr.us-east-1.amazonaws.com/myrepo:latest
+[root@ip-172-31-79-70 tic-tac-toe-docker]# docker push 061039784179.dkr.ecr.us-east-1.amazonaws.com/myrepo:latest
+The push refers to repository [061039784179.dkr.ecr.us-east-1.amazonaws.com/myrepo]
+076dc996f23b: Pushed 
+8921786c2de3: Pushed 
+08ba9962589f: Pushed 
+6e32bc56a725: Pushed 
+6898c33749d5: Pushed 
+69f56ce8c461: Pushed 
+20cf308e6957: Pushed 
+77a2b55fbe8b: Pushed 
+latest: digest: sha256:ac2c432685af37b4414651f6e144eb998089c01267af1f292e448933012c0ef1 size: 1987
+[root@ip-172-31-79-70 tic-tac-toe-docker]#
+
+
+
+
+now we got the image in ECR what we created repo over there
+
+for what purpose we pushed the image in ECR here means to create a container
+
+previosly we have created the container by using Docker
+
+as of now we can use as ECS servie
+
+open image in ECR------> copy the image url over there 061039784179.dkr.ecr.us-east-1.amazonaws.com/myrepo:latest
+
+search as ECS ------> we need to create a cluster here select cluster-------> select create cluster-----> name:pranay cluster----> selet fargate
+fargate means serverless-----.>cluster has been created
+
+open that created cluster------> select task defination in here we need to give container details, what will be th container name, on which image the container 
+will should be run, what must be port number here,those all details are need to be given here in task defination
+
+select create new task defination----> name:mytask----> select aws fargate------->take cpu---1,memory----2gb, -----> container name:my container-----> 
+image url------> copy and paste here image url what the image have in ECR service in that image-----> port number:80--->create
+
+
+after this task defination done-----> go to cluster and create one service here------> 
+
+select cluster-----> select previously created cluster-----> create service here------> select create----> select created task defination------> select desired tasks:3
+select network-----> select security groups groups here------> create---> done
+
+if the task has been created means based on these 3 containers will be created and may access those 3 containers to access application
+
+
+finally all applications will be accessible
+
+
+delete all clusters, task definations, all roles etc everything.
+
