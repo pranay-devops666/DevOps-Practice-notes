@@ -1,5 +1,153 @@
 DOCKER NETWORKS
 
+DOCKER NETWORKS is the last part of components in Docker concept
+
+launch instance and create some containers inside in it and see how networks will be work
+
+launch one instance -------> t3.micro---->keypair---->sg------>8gb-----> launch instance
+
+install docker in it
+
+yum install docker -y && systemctl start docker
+
+containers have IP adress, how do we know means by inspecting it
+
+docker inspect containername
+
+for a container IP address will come form Network only
+
+docker network ls
+# command to see list of networks
+
+now create one container like below
+
+docker run -itd --name containername -p 1111:80 nginx
+
+docker inspect containername
+
+types of network 
+1. bridge network
+2. host network
+3. none network
+
+bridge network is the defult network in docker
+
+bridge network provide the IP address to the container
+
+host network -------> if we want to share configrations to containers in that case we can use host network
+host network is used to share the network configurations with the container
+
+none network--------->  it means i dont want any network to my container
+we can't get network configurations if we choose none network means and it will be presnt within the server only and can't expose to outside
+mostly it will be used in database server containers
+
+OVERLAY network------>means i have 2 docker hosts and  having 2 different containers in both hosts and not having communicate conatiners to containers each other 
+in this case we can use OVERLAY network to communicate the container to containers each other from different hosts
+ex: application container has present in one server, database container has present in another server, in here generally application must be communicate to databse
+then now only all data will be store in database container so in that case network is not allowing means data can't be stored in the database 
+in that case stuation we can use OVERLAY network we use.
+
+overlay network is used to establish a connection between the containers which are present in different hosts.
+
+docker run -itd --name containername -p 2222:80 --network=host nginx
+
+if we mention --network while  creating a container it will be create in specific network or else it will be create on default bridge network
+
+lets discuss in real time in which situation we can use is
+
+for example we have application container, database container as well so application container must be communicate to db container and db container must be communicate with app cpnt as well
+
+generally we can connect one system to another system is like wired or wireless
+
+ex: LAN wifi connecting through IP 
+
+lets do in practical way
+
+docker network ls
+
+docker network create app-network
+docker network create db-network
+
+now we will create app-cont in app-network and  will create db-cont in db-network as well like below
+
+docker run -itd --name app-cont -p 1122:80 --network app-network nginx 
+
+docker ps
+
+docker inspect app-cont
+
+docker run -itd --name db-cont -p 1122:80 --network db-network nginx 
+
+docker ps
+
+docker inspect app-cont
+
+now these created 2 networks will get communicate each other by default ? ------> no
+
+how to check like below
+
+do inspect app-cont
+
+docker inspect app-cont copy the IP and keep a side and db-cont IP  as well
+
+how to check the app-cont and db-cont is getting communicate each others is 
+
+need to be ping here like below
+
+first go to app-cont 
+
+docker exec -it app-cont bash
+
+need to install ping package here inside the container
+
+apt update -y
+
+apt install iputils-ping -y
+
+now give ping here
+
+ping IP address of db-cont/IP address of app-cont
+
+in here we can know wheather it is pinging or not its pinging means the communication is happening between app-cont & db-cont good 
+not pinging means communication is not happening
+
+ctrl+c to stop pinging
+
+now we will do attach app-cont network to db-cont network
+
+we are attaching network to a container like below
+
+docker network connect db-network app-cont
+
+now check by inspecting 
+
+docker inspect app-cont/db-cont
+
+now same attach db-cont network to app-cont network as well like above process
+
+docker network connect app-network db-cont
+
+docker inspect db-cont/app-cont
+
+go to inside of one container like app-cont or db-cont
+
+docker exec -it app-cont bash
+
+ping IP address of db-cont
+
+it is pinging
+
+now do disconnect and check it is pinging or not
+
+docker network disconnect app-network db-cont
+
+docker network disconnect db-network app-cont
+
+docker network command
+
+
+
+
 
 DOCKER NETWORKS
 
