@@ -1,5 +1,13 @@
 DOCKER SECURITY CONCEPT
 
+whole concept is 
+
+How to reduce the image size 
+
+1. we nee dto take the alpine/slim images as a base image for our Dockerfile
+2. write a multi stage Dockerfile
+3. dockerignore file use
+
 trivy--------> scan the image
 
 we are using trivy for images are safe or not
@@ -85,6 +93,22 @@ Legend:
 
 To suppress version checks, run Trivy scans with the --skip-version-check flag
 
+yum install git -y
+
+git clone https://github.com/devops0014/nodejs-docker.git
+
+cd nodejs-docker/
+
+[root@ip-172-31-68-37 nodejs-docker]# ll
+total 16
+-rw-r--r--. 1 root root 110 Dec 24 09:26 Dockerfile
+-rw-r--r--. 1 root root 263 Dec 24 09:26 index.js
+-rw-r--r--. 1 root root  82 Dec 24 09:26 package-lock.json
+-rw-r--r--. 1 root root 436 Dec 24 09:26 package.json
+
+now we need to build the Dockerfile here
+
+docker build -t image2 .
 
 
 
