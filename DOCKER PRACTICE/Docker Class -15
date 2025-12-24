@@ -34,3 +34,18 @@ now we can use trivy to chekc created image is safe or not
 
 we need to install trivy image here
 
+curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin v0.67.2
+
+trivy --version
+
+trivy image image1
+
+vim Dockerfile
+FROM nginx:stable-alpine
+COPY index.html /usr/share/nginx/html/
+
+:wq
+
+docker build -t image2 .
+
+
