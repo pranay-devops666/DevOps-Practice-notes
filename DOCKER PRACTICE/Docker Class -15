@@ -1,0 +1,36 @@
+DOCKER SECURITY CONCEPT
+
+trivy--------> scan the image
+
+we are using trivy for images are safe or not
+
+take one instance-----> c7 flex.large---->keypair--->jnsg----> 20ebs-----> launch instance
+
+launch instance 
+
+install docker 
+
+yum install docker -y && systemct start docker
+
+vim index.html
+<h1>welcome to docker security class </h1>
+:wq
+
+now we need to deploy this file 
+
+means need to write Dockerfile
+
+vim Dockerfile
+FROM nginx
+COPY index.html /usr/share/nginx/html/
+
+:wq
+
+docker build -t image1 .
+
+docker images
+
+now we can use trivy to chekc created image is safe or not
+
+we need to install trivy image here
+
