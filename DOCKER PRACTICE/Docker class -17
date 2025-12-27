@@ -168,7 +168,7 @@ go to job and add another stage like below
 
 befor edoing this job configuration do install trivy on MANAGER instance
 
-
+and install docker pipeline plugin as well
 
 
 pipeline {
@@ -212,6 +212,23 @@ pipeline {
             sh 'trivy image dbimage'
         }
     }
+    stage ("Tag") {
+        steps {
+            sh 'docker tag appimage shaikmustafa/mynewapp:appimage'
+            sh 'docker tag dbimage shaikmustafa/mynewapp:dbimage'
+        }
+    }
+    stage ("Push") {
+        steps {
+            script {
+                withDockerRegistry(credentialsId: 'dockerhub') {
+                    sh 'docker push shaikmustafa/mynewapp:appimage'
+                    sh 'docker push shaikmustafa/mynewapp:dbimage'
+                }
+            }
+        }
+    }
+    
   }
 }
 
