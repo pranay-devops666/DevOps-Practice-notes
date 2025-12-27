@@ -158,6 +158,130 @@ pipeline {
             }
         }
     }
+  }
+}
+
+
+save and build the job-----> build job success
+
+go to job and add another stage like below
+
+befor edoing this job configuration do install trivy on MANAGER instance
+
+
+
+
+pipeline {
+    agent {
+        node {
+            label 'docker'
+        }
+    }
+    tools {
+        maven 'mymaven'
+    }
+    stages {
+        stage('Code') {
+            steps {
+                git "https://github.com/devops0014/dockerwebapp.git"
+            }
+        }
+    stage ("CQA") {
+        steps {
+            withSonarQubeEnv("mysonar") {
+                sh "mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=MyProject"
+            }
+        }
+    }
+    stage ("Build") {
+        steps {
+            sh 'mvn clean package'
+            sh 'cp -r target Docker-app'
+        }
+    }
+    // add nexus stage here
+    stage ("Image") {
+        steps {
+            sh 'docker build -t appimage Docker-app'
+            sh 'docker build -t dbimage Docker-db'
+        }
+    }
+    stage ("ScanImage") {
+        steps {
+            sh 'trivy image appimage'
+            sh 'trivy image dbimage'
+        }
+    }
+  }
+}
+
+save and build the job-----> build job success
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+pipeline {
+    agent {
+        node {
+            label 'docker'
+        }
+    }
+    tools {
+        maven 'mymaven'
+    }
+    stages {
+        stage('Code') {
+            steps {
+                git "https://github.com/devops0014/dockerwebapp.git"
+            }
+        }
+    stage ("CQA") {
+        steps {
+            withSonarQubeEnv("mysonar") {
+                sh "mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=MyProject"
+            }
+        }
+    }
     stage ("Build") {
         steps {
             sh 'mvn clean package'
@@ -200,5 +324,3 @@ pipeline {
     }
   }
 }
-
-
