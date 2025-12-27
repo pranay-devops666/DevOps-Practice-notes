@@ -1,1 +1,49 @@
 DOCKER PROJECT ON STACK
+
+
+
+launch 3 instances 
+1. for MANAGER 2 & 3 for WORKDRE1, WORKER2
+
+launch instance---> MANAGER-------->m7i-flex-large----> keypair----> sg-----> launch instance
+launch instance---> WORKER1-------->t3.micro----> keypair----> sg-----> launch instance
+launch instance---> WORKER2-------->t3.micro----> keypair----> sg-----> launch instance
+
+
+connect all instances and install DOCKER on each instances
+
+yum install docker -y && systemctl start docker
+
+take another instance for JEnkins CI/CD
+
+launch instance----> tc7i-frlx-large0--------->jenkinssg----->18----->launch instance
+
+
+
+[root@MANAGER ~]# docker swarm init
+Swarm initialized: current node (mbkdw55j63jjpjscv6it5tv9n) is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-5gq0o1lgsudp3ojr937vxo92wv3qzx6q7g9jtau9oppofv4k11-4057uq7eeh6znga344au72y6q 172.31.37.241:2377
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+
+[root@WORKER-1 ~]# docker swarm join --token SWMTKN-1-5gq0o1lgsudp3ojr937vxo92wv3qzx6q7g9jtau9oppofv4k11-4057uq7eeh6znga344au72y6q 172.31.37.241:2377
+This node joined a swarm as a worker.
+[root@WORKER-1 ~]#
+
+[root@WORKER-2 ~]# docker swarm join --token SWMTKN-1-5gq0o1lgsudp3ojr937vxo92wv3qzx6q7g9jtau9oppofv4k11-4057uq7eeh6znga344au72y6q 172.31.37.241:2377
+This node joined a swarm as a worker.
+[root@WORKER-2 ~]# 
+
+
+[root@MANAGER ~]# docker node ls
+ID                            HOSTNAME   STATUS    AVAILABILITY   MANAGER STATUS   ENGINE VERSION
+mbkdw55j63jjpjscv6it5tv9n *   MANAGER    Ready     Active         Leader           25.0.13
+82qnrnh2e1adtsn1s26s80c2n     WORKER-1   Ready     Active                          25.0.13
+vqe11yvm8navyjcq8ijax2e4e     WORKER-2   Ready     Active                          25.0.13
+[root@MANAGER ~]# 
+
+
