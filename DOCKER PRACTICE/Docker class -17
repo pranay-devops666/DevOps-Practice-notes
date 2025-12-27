@@ -47,3 +47,158 @@ vqe11yvm8navyjcq8ijax2e4e     WORKER-2   Ready     Active                       
 [root@MANAGER ~]# 
 
 
+go to JENKINS launched instance
+
+
+install jenkins on that instance
+
+sudo yum update –y
+sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+sudo yum upgrade
+sudo yum install java-17-amazon-corretto -y
+sudo yum install jenkins git -y
+sudo systemctl enable jenkins
+sudo systemctl start jenkins
+sudo systemctl status jenkins
+sudo mkdir -p /var/tmp_disk
+sudo chmod 1777 /var/tmp_disk
+sudo mount --bind /var/tmp_disk /tmp
+echo '/var/tmp_disk /tmp none bind 0 0' | sudo tee -a /etc/fstab
+sudo systemctl mask tmp.mount
+df -h /tmp
+sudo systemctl restart jenkins
+
+
+http://54.204.120.151:8080/
+
+launched jenkins dashboard
+
+now JENKINS instance is seperate & MANAGER instance is seperate
+but jenkins pipeline will be run on MANAGER instance
+
+what to do ro run the jenkins pipeline on Manager instance is 
+to do is master & slave concept here
+
+go to manage jenkins---> select nodes---> create node---> name:docker-node---->create
+
+no.of executes:2----> remote root directory:/home/ec2-user/jenkins/---->label name:docker--->usage: only build jobs with label expressions matching with node------>
+launch method:launch agent via ssh----->host:MANAGER instance private IP address---------> credntials:select jenkins-->kind:ssh username with priavate key------>
+ID:dockernode-------->description:this is for docker server------>username:ec2-user, entire directly------>add credentials----host-key verification---->
+non-verify verification strategy------>save
+
+after creating a node the node will went offline why because the jav didn't installed in MANAGER instance
+
+install java on MANAGER instance
+
+yum install java-17-amazon-corretto
+
+now node became online
+
+now we will do run pipeline on created node
+
+install git on MANAGER instance
+
+yum install git -y
+
+now create containers on MANAGER instance
+
+docker run -itd --name sonar -p 1234:9000 sonarqube:lts-community
+
+now do access by copying MANAGER ip/9000
+
+[root@MANAGER ~]# docker ps -a
+CONTAINER ID   IMAGE                     COMMAND                  CREATED          STATUS          PORTS                                       NAMES
+b86e8b2e9aec   sonarqube:lts-community   "/opt/sonarqube/dock…"   51 seconds ago   Up 49 seconds   0.0.0.0:1234->9000/tcp, :::1234->9000/tcp   sonar
+[root@MANAGER ~]# docker ps
+CONTAINER ID   IMAGE                     COMMAND                  CREATED          STATUS          PORTS                                       NAMES
+b86e8b2e9aec   sonarqube:lts-community   "/opt/sonarqube/dock…"   54 seconds ago   Up 52 seconds   0.0.0.0:1234->9000/tcp, :::1234->9000/tcp   sonar
+[root@MANAGER ~]# 
+
+now do access sonar like below
+
+http://54.166.136.252:1234/
+
+go to jenkins dashboard and install sonarqube plugin
+
+go to manage jenkins---------> select systems--------> select sonarqube installations---> add sonarqube installations------>name:mysonar----->paste the sonarqube 
+dashboard url------>add sonarqube credentials here--------->kind:secret text--------->take token from sonarqube dashboard
+
+
+
+go to manage jenkins---------> select tools ----------> add SonarQube Scanner installations ----->name:mysonar------> save
+
+
+go to manage jenkins---------> select tools ----------> add maven ----->name:mymaven------> save
+
+
+create job ------> name:MyDeploymet
+
+
+
+pipeline {
+    agent {
+        node {
+            label 'docker'
+        }
+    }
+    tools {
+        maven 'mymaven'
+    }
+    stages {
+        stage('Code') {
+            steps {
+                git "https://github.com/devops0014/dockerwebapp.git"
+            }
+        }
+    stage ("CQA") {
+        steps {
+            withSonarQubeEnv("mysonar") {
+                sh "mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=MyProject"
+            }
+        }
+    }
+    stage ("Build") {
+        steps {
+            sh 'mvn clean package'
+            sh 'cp -r target Docker-app'
+        }
+    }
+ // add nexus stage here
+    stage ("Image") {
+        steps {
+            sh 'docker build -t appimage Docker-app'
+            sh 'docker build -t dbimage Docker-db'
+        }
+    }
+    stage ("ScanImage") {
+        steps {
+            sh 'trivy image appimage'
+            sh 'trivy image dbimage'
+        }
+    }
+    stage ("Tag") {
+        steps {
+            sh 'docker tag appimage shaikmustafa/mynewapp:appimage'
+            sh 'docker tag dbimage shaikmustafa/mynewapp:dbimage'
+        }
+    }
+    stage ("Push") {
+        steps {
+            script {
+                withDockerRegistry(credentialsId: 'dockerhub') {
+                    sh 'docker push shaikmustafa/mynewapp:appimage'
+                    sh 'docker push shaikmustafa/mynewapp:dbimage'
+                }
+            }
+        }
+    }
+    stage ("Deploy") {
+        steps {
+            sh 'docker stack deploy flm --compose-file=compose.yml'
+        }
+    }
+  }
+}
+
+
