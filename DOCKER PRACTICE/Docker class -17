@@ -82,6 +82,7 @@ to do is master & slave concept here
 plugins need to install in jenkinks dashboard while doing doing project is 
 1. Pipeline: Stage ViewVersion
 2. sonarqube plugin
+3. docker pipeline plugin
 
 go to manage jenkins---> select nodes---> create node---> name:docker-node---->create
 
@@ -171,11 +172,19 @@ save and build the job-----> build job success
 
 upto now Build got success.
 
-go to job and add another stage like below
-
 before doing this job configuration do install trivy on MANAGER instance
 
-and install docker pipeline plugin as well
+[root@MANAGER ~]# curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin v0.67.2
+aquasecurity/trivy info checking GitHub for tag 'v0.67.2'
+aquasecurity/trivy info found version: 0.67.2 for v0.67.2/Linux/64bit
+aquasecurity/trivy info installed /usr/local/bin/trivy
+[root@MANAGER ~]# trivy --version
+Version: 0.67.2
+[root@MANAGER ~]# 
+
+go to job and add another stage like below
+
+and install docker pipeline plugin as well in jenkins dashboard
 
 
 pipeline {
