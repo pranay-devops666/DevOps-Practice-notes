@@ -9,6 +9,12 @@ launch instance---> MANAGER-------->m7i-flex-large----> keypair----> sg-----> la
 launch instance---> WORKER1-------->t3.micro----> keypair----> sg-----> launch instance
 launch instance---> WORKER2-------->t3.micro----> keypair----> sg-----> launch instance
 
+hostnamectl set-hostname "MANAGER"
+hostnamectl set-hostname "MWORKER-1"
+hostnamectl set-hostname "WORKRR-2"
+
+
+
 
 connect all instances and install DOCKER on each instances
 
@@ -18,7 +24,7 @@ take another instance for JEnkins CI/CD
 
 launch instance----> tc7i-frlx-large0--------->jenkinssg----->18----->launch instance
 
-
+docker swarm init
 
 [root@MANAGER ~]# docker swarm init
 Swarm initialized: current node (mbkdw55j63jjpjscv6it5tv9n) is now a manager.
