@@ -67,13 +67,6 @@ sudo yum install jenkins git -y
 sudo systemctl enable jenkins
 sudo systemctl start jenkins
 sudo systemctl status jenkins
-sudo mkdir -p /var/tmp_disk
-sudo chmod 1777 /var/tmp_disk
-sudo mount --bind /var/tmp_disk /tmp
-echo '/var/tmp_disk /tmp none bind 0 0' | sudo tee -a /etc/fstab
-sudo systemctl mask tmp.mount
-df -h /tmp
-sudo systemctl restart jenkins
 
 
 http://54.204.120.151:8080/
@@ -85,6 +78,10 @@ but jenkins pipeline will be run on MANAGER instance
 
 what to do ro run the jenkins pipeline on Manager instance is 
 to do is master & slave concept here
+
+plugins need to install in jenkinks dashboard while doing doing project is 
+1. Pipeline: Stage ViewVersion
+2. sonarqube plugin
 
 go to manage jenkins---> select nodes---> create node---> name:docker-node---->create
 
@@ -111,7 +108,9 @@ now create containers on MANAGER instance
 
 docker run -itd --name sonar -p 1234:9000 sonarqube:lts-community
 
-now do access by copying MANAGER ip/9000
+now do access by copying MANAGER ip/1234
+
+http://54.175.97.173:1234/
 
 [root@MANAGER ~]# docker ps -a
 CONTAINER ID   IMAGE                     COMMAND                  CREATED          STATUS          PORTS                                       NAMES
@@ -170,9 +169,11 @@ pipeline {
 
 save and build the job-----> build job success
 
+upto now Build got success.
+
 go to job and add another stage like below
 
-befor edoing this job configuration do install trivy on MANAGER instance
+before doing this job configuration do install trivy on MANAGER instance
 
 and install docker pipeline plugin as well
 
