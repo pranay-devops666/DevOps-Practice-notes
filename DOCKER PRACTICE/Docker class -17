@@ -215,7 +215,11 @@ pipeline {
             sh 'cp -r target Docker-app'
         }
     }
-    // add nexus stage here
+    stage ("Artifact") {
+            steps {
+                nexusArtifactUploader artifacts: [[artifactId: 'vprofile', classifier: '', file: 'target/vprofile-v2.war', type: 'war']], credentialsId: 'nexuspassword', groupId: 'com.visualpathit', nexusUrl: '54.197.149.86:8081/', nexusVersion: 'nexus3', protocol: 'http', repository: 'myrepo', version: 'v2'
+            }
+    }
     stage ("Image") {
         steps {
             sh 'docker build -t appimage Docker-app'
