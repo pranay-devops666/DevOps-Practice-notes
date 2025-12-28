@@ -252,7 +252,27 @@ pipeline {
   }
 }
 
-save the job
+save the job and build now
+
+job build got FAILURE 
+to get rid of this failure gie this command on MANAGER instance before giving the command need to install dockercompose on MANAGER instance
+
+chmod 777 /var/run/docker.sock
+
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+# Apply executable permissions
+sudo chmod +x /usr/local/bin/docker-compose
+# Create a symbolic link
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+
+# Install using pip (Python package manager)
+sudo yum install -y python3-pip
+sudo pip3 install docker-compose
+
+#check version
+docker-compose --version
+
+chmod 777 /var/run/docker.sock
 
 
 as of now we are using docker swarm or docker stack we are going to use thats why we used docker cluster like MANAGER, and 2 workers
@@ -265,7 +285,19 @@ we already have the cluster
 
 then need to get compose 
 
-go to github-------->all setups repo----->select dockercompose.sh------> open and copy the commands from 6th line all over there and paste in 
+go to github-------->all setups repo----->select dockercompose.sh------> open and copy the commands from 6th line all over there and paste in on 
+MANAGER instance
+
+then now need to write dockercompose file here on MANAGER instance
+
+chmod 777 /var/run/docker.sock
+
+now run the same job again
+
+
+
+
+
 
 
 
