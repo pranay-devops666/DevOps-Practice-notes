@@ -295,7 +295,22 @@ chmod 777 /var/run/docker.sock
 now run the same job again
 
 
+need to change compose.yml in github like below ad run the job
 
+---
+version: "3"
+services:
+ devopsdb:
+   image: shaikmustafa/mynewapp:dbimage
+   ports:
+     - "3306:3306"
+
+ application:
+   image: shaikmustafa/mynewapp:appimage
+   ports:
+     - "1234:8080"
+   depends_on:
+     - "devopsdb"
 
 
 
