@@ -252,8 +252,20 @@ pipeline {
   }
 }
 
-save and build the job-----> build job success
+save the job
 
+
+as of now we are using docker swarm or docker stack we are going to use thats why we used docker cluster like MANAGER, and 2 workers
+
+then what we need to do is we will use docker stack
+
+we need compose and stack to use stack
+
+we already have the cluster
+
+then need to get compose 
+
+go to github-------->all setups repo----->select dockercompose.sh------> open and copy the commands from 6th line all over there and paste in 
 
 
 
