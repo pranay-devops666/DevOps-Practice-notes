@@ -202,55 +202,50 @@ pipeline {
                 git "https://github.com/devops0014/dockerwebapp.git"
             }
         }
-    stage ("CQA") {
-        steps {
-            withSonarQubeEnv("mysonar") {
-                sh "mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=MyProject"
-            }
-        }
-    }
-    stage ("Build") {
-        steps {
-            sh 'mvn clean package'
-            sh 'cp -r target Docker-app'
-        }
-    }
-    stage ("Artifact") {
+        stage ("CQA") {
             steps {
-                nexusArtifactUploader artifacts: [[artifactId: 'vprofile', classifier: '', file: 'target/vprofile-v2.war', type: 'war']], credentialsId: 'nexuspassword', groupId: 'com.visualpathit', nexusUrl: '54.197.149.86:8081/', nexusVersion: 'nexus3', protocol: 'http', repository: 'myrepo', version: 'v2'
+                withSonarQubeEnv("mysonar") {
+                    sh "mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=MyProject"
+                }
             }
-    }
-    stage ("Image") {
-        steps {
-            sh 'docker build -t appimage Docker-app'
-            sh 'docker build -t dbimage Docker-db'
         }
-    }
-    stage ("ScanImage") {
-        steps {
-            sh 'trivy image appimage'
-            sh 'trivy image dbimage'
+        stage ("Build") {
+            steps {
+                sh 'mvn clean package'
+                sh 'cp -r target Docker-app'
+            }
         }
-    }
-    stage ("Tag") {
-        steps {
-            sh 'docker tag appimage shaikmustafa/mynewapp:appimage'
-            sh 'docker tag dbimage shaikmustafa/mynewapp:dbimage'
+        stage ("Image") {
+            steps {
+                sh 'docker build -t appimage Docker-app'
+                sh 'docker build -t dbimage Docker-db'
+            }
         }
-    }
-    stage ("Push") {
-        steps {
-            script {
-                withDockerRegistry(credentialsId: 'dockerhub') {
-                    sh 'docker push shaikmustafa/mynewapp:appimage'
-                    sh 'docker push shaikmustafa/mynewapp:dbimage'
+        stage ("ScanImage") {
+            steps {
+                sh 'trivy image appimage'
+                sh 'trivy image dbimage'
+            }
+        }
+        stage ("Tag") {
+            steps {
+                sh 'docker tag appimage pranay419/mynewapp:appimage'
+                sh 'docker tag dbimage pranay419/mynewapp:dbimage'
+            }
+        }
+        stage ("Push") {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker-nodess') {
+                        sh 'docker push pranay419/mynewapp:appimage'
+                        sh 'docker push pranay419/mynewapp:dbimage'
+                    }
                 }
             }
         }
     }
-    
-  }
 }
+
 
 save the job and build now
 
