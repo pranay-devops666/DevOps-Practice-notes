@@ -243,6 +243,11 @@ pipeline {
                 }
             }
         }
+        stage ("Deploy") {
+            steps {
+                sh 'docker stack deploy flm --compose-file=compose.yml'
+            }
+        }
     }
 }
 
@@ -325,6 +330,57 @@ services:
    depends_on:
      - "devopsdb"
 
+
+
+[root@manager ~]# docker stack ls
+NAME      SERVICES
+flm       2
+[root@manager ~]# docker service ls
+ID             NAME              MODE         REPLICAS   IMAGE                            PORTS
+dsgbq5ty5n5i   flm_application   replicated   1/1        shaikmustafa/mynewapp:appimage   *:1111->8080/tcp
+ij7bhxciaa3w   flm_devopsdb      replicated   1/1        shaikmustafa/mynewapp:dbimage    *:3306->3306/tcp
+[root@manager ~]# 
+
+now try to access application 
+
+by copying worker1 or worker2 PublicIP:1111
+
+http://98.84.46.23:1111/login
+
+application will be able to access
+
+[root@manager ~]# docker service scale flm_application=3
+flm_application scaled to 3
+overall progress: 3 out of 3 tasks 
+1/3: running   [==================================================>] 
+2/3: running   [==================================================>] 
+3/3: running   [==================================================>] 
+verify: Service converged 
+[root@manager ~]# docker service scale flm_devopsdb=3
+flm_devopsdb scaled to 3
+overall progress: 3 out of 3 tasks 
+1/3: running   [==================================================>] 
+2/3: running   [==================================================>] 
+3/3: running   [==================================================>] 
+verify: Service converged 
+[root@manager ~]# 
+
+
+[root@manager ~]# docker service ls
+ID             NAME              MODE         REPLICAS   IMAGE                            PORTS
+dsgbq5ty5n5i   flm_application   replicated   3/3        shaikmustafa/mynewapp:appimage   *:1111->8080/tcp
+ij7bhxciaa3w   flm_devopsdb      replicated   3/3        shaikmustafa/mynewapp:dbimage    *:3306->3306/tcp
+[root@manager ~]# docker service ps flm_application
+ID             NAME                IMAGE                            NODE       DESIRED STATE   CURRENT STATE           ERROR     PORTS
+u69gwn4y6xfs   flm_application.1   shaikmustafa/mynewapp:appimage   worker-1   Running         Running 8 minutes ago             
+xt7hqd3buk1l   flm_application.2   shaikmustafa/mynewapp:appimage   manager    Running         Running 2 minutes ago             
+nq02t4co6be0   flm_application.3   shaikmustafa/mynewapp:appimage   worker-2   Running         Running 2 minutes ago             
+[root@manager ~]# docker service ps flm_devopsdb
+ID             NAME             IMAGE                           NODE       DESIRED STATE   CURRENT STATE                ERROR     PORTS
+9cewf46a0q6g   flm_devopsdb.1   shaikmustafa/mynewapp:dbimage   manager    Running         Running 8 minutes ago                  
+t6ylnv7bzug7   flm_devopsdb.2   shaikmustafa/mynewapp:dbimage   worker-1   Running         Running about a minute ago             
+ah2w8v4oisn5   flm_devopsdb.3   shaikmustafa/mynewapp:dbimage   worker-2   Running         Running about a minute ago             
+[root@manager ~]# 
 
 
 
