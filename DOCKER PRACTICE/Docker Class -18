@@ -1,0 +1,13 @@
+PROJECT ON MIGRATING THE MONOLITHIC TO MICRO SERVICES APPLICATION
+
+
+first launch one instance
+
+launch instance ---------> c7i-flex-large------>keypair---------->jenkinssg--------->18ebs ------->launch instance
+
+connect the ec2-instance
+
+install git
+
+yum install git -y
+
