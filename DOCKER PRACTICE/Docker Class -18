@@ -292,6 +292,213 @@ we need Docker to impliment microservices
 
 yum install docker -y && systemctl start docker
 
+git clone https://github.com/pranay-devops666/python-code-library-app.git
+
+git checkout master
+
+cd database/
+
+vim Dockerfile
+
+FROM mysql/mysql-server:5.7
+ENV MYSQL_ROOT_PASSWORD=root
+ENV MYSQL_USER=root
+EXPOSE 3306
+COPY database.sql /docker-entrypoint-initdb.d/database.sql
+
+:wq
+
+docker build -t dbimage .
+
+cd ..
+
+
+cd auth/
+
+vim Dockerfile
+
+# Base image
+FROM python:3.9-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy service code
+COPY . .
+
+# Default command (will be overridden in docker-compose)
+CMD ["python", "auth_service.py"]
+
+
+:wq
+
+
+docker build authimage .
+
+cd ..
+
+cd books/ 
+
+vim Dockerfile
+
+# Base image
+FROM python:3.9-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy service code
+COPY . .
+
+# Default command (will be overridden in docker-compose)
+CMD ["python", "book_service.py"]
+
+:wq
+
+cd ..
+
+cd borrow/
+
+vim Dockerfile
+
+# Base image
+FROM python:3.9-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy service code
+COPY . .
+
+# Default command (will be overridden in docker-compose)
+CMD ["python", "borrow_service.py"]
+
+:wq
+
+docker build -t borrowimage .
+
+docker build -t frontendimage .
+
+[root@ip-172-31-2-246 python-code-library-app]# docker images
+REPOSITORY      TAG       IMAGE ID       CREATED              SIZE
+frontendimage   latest    1a94c2029455   21 seconds ago       232MB
+borrowimage     latest    399dccdc8412   About a minute ago   232MB
+bookimage       latest    157617b68831   2 minutes ago        232MB
+authimage       latest    e3af36432ddc   4 minutes ago        232MB
+dbimage         latest    9a54af167796   7 minutes ago        432MB
+[root@ip-172-31-2-246 python-code-library-app]# 
+
+
+now we need containers here
+
+we can't create containers directly here why because if we create directly means it will be create by default on bridge network
+
+so we need seperate network for those 
+
+[root@ip-172-31-2-246 python-code-library-app]# docker network create pranay
+bd64f7b4624cd8bfdf7f70acd1e6705847f2b9fb4a91465f9257ab4f6b020acb
+[root@ip-172-31-2-246 python-code-library-app]#
+
+
+now in this name pranay network we need to create containers here
+
+[root@ip-172-31-2-246 python-code-library-app]# docker run -d --name db -p 3306:3306 --network pranay dbimage
+2c46101e96030524a9d84d633f99081e6f298ebf3c594d958b1dd5aebbeeeab9
+[root@ip-172-31-2-246 python-code-library-app]# 
+
+[root@ip-172-31-2-246 python-code-library-app]# docker exec -it db bash
+bash-4.2# mysql -u root -p
+Enter password: 
+ERROR 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+bash-4.2# mysql -u root -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 5
+Server version: 5.7.41 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2023, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show tables;
+ERROR 1046 (3D000): No database selected
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| digital_library    |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+5 rows in set (0.00 sec)
+
+mysql> 
+
+
+
+ctrl+d for 2 times to exit
+
+[root@ip-172-31-2-246 python-code-library-app]# docker run -d --name auth_service -p 5001:5001 --network pranay authimage
+f89783ffe7ae3cf46529f4b811b44262c4a90dfa6c7e4366f244af8aa06290ca
+[root@ip-172-31-2-246 python-code-library-app]# 
+
+
+[root@ip-172-31-2-246 python-code-library-app]# docker run -d --name book_service -p 5002:5002 --network pranay bookimage
+432c6941b932fb1d11a2161f34b8c34bc3c3af56a8876e5597230a96d5bb969e
+[root@ip-172-31-2-246 python-code-library-app]#
+
+
+[root@ip-172-31-2-246 python-code-library-app]# docker run -d --name borrow_service -p 5003:5003 --network pranay borrowimage
+71054fda7eb0844e770ba169800c30a524c1739655426fd44d9f0b813ba93f11
+[root@ip-172-31-2-246 python-code-library-app]#
+
+
+[root@ip-172-31-2-246 python-code-library-app]# docker run -d --name frontend -p 5000:5000 --network pranay frontendimage
+472b318706741446b38102eddd91a18f81136b667f33deb327b99b47f43eac24
+[root@ip-172-31-2-246 python-code-library-app]#
+
+
+[root@ip-172-31-2-246 python-code-library-app]# docker ps
+CONTAINER ID   IMAGE           COMMAND                  CREATED              STATUS                    PORTS                                                  NAMES
+472b31870674   frontendimage   "python app.py"          13 seconds ago       Up 11 seconds             0.0.0.0:5000->5000/tcp, :::5000->5000/tcp              frontend
+71054fda7eb0   borrowimage     "python borrow_servi…"   About a minute ago   Up About a minute         0.0.0.0:5003->5003/tcp, :::5003->5003/tcp              borrow_service
+432c6941b932   bookimage       "python book_service…"   About a minute ago   Up About a minute         0.0.0.0:5002->5002/tcp, :::5002->5002/tcp              book_service
+f89783ffe7ae   authimage       "python auth_service…"   3 minutes ago        Up 3 minutes              0.0.0.0:5001->5001/tcp, :::5001->5001/tcp              auth_service
+2c46101e9603   dbimage         "/entrypoint.sh mysq…"   11 minutes ago       Up 11 minutes (healthy)   0.0.0.0:3306->3306/tcp, :::3306->3306/tcp, 33060/tcp   db
+[root@ip-172-31-2-246 python-code-library-app]# 
+
+
+
+5 images & 5 containers has been created
+
+now do access the application
+
+http://34.234.175.36:5000/signin
+
+
+before the application had runned on local now the application is running on containers
+
+
+
+
 
 
 
