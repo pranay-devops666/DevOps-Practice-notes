@@ -176,6 +176,113 @@ now do check database will be create or not by this below command
 
 
 
+MySQL [digital_library]> show tables;
++---------------------------+
+| Tables_in_digital_library |
++---------------------------+
+| books                     |
+| borrow_records            |
+| users                     |
++---------------------------+
+3 rows in set (0.002 sec)
+
+MySQL [digital_library]> select * from books;
++----+-------------+---------------+
+| id | title       | author        |
++----+-------------+---------------+
+|  1 | Docker Book | Mustafa       |
+|  2 | Kubernetes  | Mustafa Shaik |
+|  3 | Terraform   | Musta         |
+|  4 | Docker Book | Mustafa       |
+|  5 | Kubernetes  | Mustafa Shaik |
+|  6 | Terraform   | Musta         |
++----+-------------+---------------+
+6 rows in set (0.001 sec)
+
+MySQL [digital_library]>
+
+lets get back to home
+
+ctrl+d give this command 2 times
+
+cd ------> enter
+
+do change app.py file and give databse end point overthere like below
+
+vim app.py
+
+here do change and give database end point in host place
+
+# app.py
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+import mysql.connector
+
+app = Flask(__name__)
+app.secret_key = "supersecretkey"
+
+# Database connection
+db = mysql.connector.connect(
+    host="database-2.cwrkcec6g5fe.us-east-1.rds.amazonaws.com",
+    user="root",
+    password="Devops2025",
+    database="digital_library"
+)
+
+
+
+now try to run application
+
+python3 app.py
+
+[root@ip-172-31-35-236 LibraryManagement]# python3 app.py
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 358-057-453
+
+
+this is working on locally only we need to work and run in outside as well
+
+if we need to work and run the application in outside means 
+
+go to app.py file do change in last line 
+
+vim app.py
+
+app.run(host="0.0.0.0", port=5000, debug=True)
+
+:wq
+
+
+[root@ip-172-31-35-236 LibraryManagement]# python3 app.py
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.31.35.236:5000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 358-057-453
+
+
+now it is accessible with port number 5000
+
+http://34.230.48.237:5000/signin
+
+
+it is working
+
+do account create here if we want means
+
+
+
+
 
 
 
