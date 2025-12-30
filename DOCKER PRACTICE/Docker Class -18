@@ -281,6 +281,17 @@ it is working
 do account create here if we want means
 
 
+delete the created database in aws dashboard
+
+do delete all files and folders in python instance
+
+now we will do impliment microservices 
+
+we need Docker to impliment microservices 
+
+
+yum install docker -y && systemctl start docker
+
 
 
 
