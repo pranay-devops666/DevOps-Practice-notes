@@ -121,8 +121,62 @@ need to do that we should take file from github repo
 
 github repo:python-code-library-app/database.sql-----------> in this github repo -------> databse.sql file 
 
-open that file and do copy paste all commands in python instanec
+open that file and do copy paste all commands in python instance like this below
 
-launch ----------> t3.micro-------->
+MySQL [(none)]> CREATE DATABASE digital_library;
+Query OK, 1 row affected (0.007 sec)
+
+MySQL [(none)]> USE digital_library;
+Database changed
+MySQL [digital_library]> 
+MySQL [digital_library]> CREATE TABLE users (
+    ->     id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     name VARCHAR(50),
+    ->     email VARCHAR(100) UNIQUE,
+    ->     password VARCHAR(100)
+    -> );
+Query OK, 0 rows affected (0.040 sec)
+
+MySQL [digital_library]> 
+MySQL [digital_library]> CREATE TABLE books (
+    ->     id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     title VARCHAR(100),
+    ->     author VARCHAR(100)
+    -> );
+Query OK, 0 rows affected (0.028 sec)
+
+MySQL [digital_library]> 
+MySQL [digital_library]> CREATE TABLE borrow_records (
+    ->     id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     user_id INT,
+    ->     book_id INT,
+    ->     borrow_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    -> );
+Query OK, 0 rows affected (0.030 sec)
+
+MySQL [digital_library]> 
+MySQL [digital_library]> -- Sample books
+MySQL [digital_library]> INSERT INTO books (title, author) VALUES
+    -> ("Docker Book", "Mustafa"),
+    -> ("Kubernetes", "Mustafa Shaik"),
+    -> ("Terraform", "Musta");
+Query OK, 3 rows affected (0.008 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+MySQL [digital_library]> 
+MySQL [digital_library]> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root';
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'IDENTIFIED BY 'root'' at line 1
+MySQL [digital_library]> FLUSH PRIVILEGES;
+Query OK, 0 rows affected (0.008 sec)
+
+MySQL [digital_library]> 
+
+
+now do check database will be create or not by this below command
+
+
+
+
+
 
 
