@@ -104,4 +104,25 @@ we can see details of username in app.py
 vim app.py
 
 
+it will take some time to create database
+
+lets launch anaother ec2-instanec for database
+
+yum install mariadb105 -y-----------> give this command to python instnace to check database will create or not
+
+mysql -u root -h database-1.cwrkcec6g5fe.us-east-1.rds.amazonaws.com -p------------> command to connect database--------->
+database-1.cwrkcec6g5fe.us-east-1.rds.amazonaws.com------(this should be copy from created database in end point)
+
+database has been conected
+
+now we need to create database tables & queries running
+
+need to do that we should take file from github repo
+
+github repo:python-code-library-app/database.sql-----------> in this github repo -------> databse.sql file 
+
+open that file and do copy paste all commands in python instanec
+
+launch ----------> t3.micro-------->
+
 
