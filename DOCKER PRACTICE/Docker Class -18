@@ -496,6 +496,51 @@ http://34.234.175.36:5000/signin
 
 before the application had runned on local now the application is running on containers
 
+docker stop $(docker ps -a -q)
+
+docker container prune
+
+for images if we want to keep means if we kept otherwise means we can delete it is optional
+
+now we will do write docker compose file here
+
+vim compose.yml
+
+---
+services:
+  db:
+    container_name: db
+    image: dbimage
+    ports:
+      - "3306:3306"
+
+  auth_service:
+    container_name: auth_service
+    image: authimage
+    ports:
+      - "5001:5001"
+
+  book_service:
+    container_name: book_service
+    image: book_service
+    ports:
+      - "5002:5002"
+
+  borrow_service:
+    container_name: borrow_service
+    image: borrow_service
+    ports:
+      - "5003:5003"
+
+  frontend:
+    container_name: frontend
+    image: frontendimage
+    ports:
+      - "5000:5000"
+
+:wq
+
+
 
 
 
